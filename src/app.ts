@@ -19,8 +19,4 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(routes);
 
-app.get("/", (req, res) => {
-  res.send("Hello");
-});
-
 app.listen(PORT, () => console.log(`server running on localhost://${PORT}`));

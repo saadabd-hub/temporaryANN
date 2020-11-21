@@ -1,6 +1,8 @@
 import Router from "express";
 import userController from "../controllers/UserController";
 import multer from "multer";
+import pagination from "../middlewares/pagination";
+import SMTPemail from "../middlewares/nodemailer";
 
 const router = Router();
 
@@ -29,13 +31,19 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-router.post("/signup", upload.single("picture"), userController.signup);
+router.post(
+  "/signup",
+  upload.single("picture"),
+  userController.signup,
+  SMTPemail._idActivation
+);
+
+router.post("/activate", userController.activate);
+
+// router.post("/signup", upload.single("picture"), userController.signup);
 
 router.post("/signin", userController.signin);
 
-router.post("/test", (req, res, next) => {
-  console.log("dummies");
-  res.send("this is dummy");
-});
+// router.post("/test", SMTPemail.helloEmail);
 
 export default router;

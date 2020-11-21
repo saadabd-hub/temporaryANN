@@ -11,4 +11,5 @@ export interface IUser extends mongoose.Document {
   subdistrict: string;
   role: number;
   picture: string;
+  resetLink: any;
 }

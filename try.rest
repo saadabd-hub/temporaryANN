@@ -1,24 +1,40 @@
 ### test
 POST http://localhost:3000/user/signup
 Content-Type: application/json
-
-{
-    "username":"admina",
-    "email":"admina",
-    "phoneNumber":613827327373,
-    "password":"admina",
-    "birthDate":"1991-11-09",
-    "IDcardName":"admina",
-    "IDcardNumber":22324,
-    "IDcardAddress":"Belah pengkolan"
-}
+# go to postman
 
 
-### test
+### LOGIN user
 POST http://localhost:3000/user/signin
 Content-Type: application/json
 
 {
-    "email":"inibisa23",
-    "password":"awd"
+    "email":"asd",
+    "password":"asd"
 }
+
+
+### see inbox
+GET http://localhost:3000/user/inbox/5fb5fd64a055fa0aa4322c20
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+
+
+### see profile
+GET  http://localhost:3000/user/profile/5fb5fd64a055fa0aa4322c20
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+
+
+### change profile
+PUT  http://localhost:3000/user/profile/5fb5fd64a055fa0aa4322c20
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+
+{
+    "fullname":"terara"
+}
+
+### test contact
+POST  http://localhost:3000/user/test
+Content-Type: application/json

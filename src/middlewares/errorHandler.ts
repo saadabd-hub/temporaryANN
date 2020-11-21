@@ -8,6 +8,10 @@ export = (err, req, res, next) => {
       code = 409;
       message = "Either Username, Email, or Phonenumber already exist";
       break;
+    case "EXPIRED":
+      code = 400;
+      message = "Link is expired";
+      break;
     case "MONGOOSE_ERROR":
       code = 500;
       message = "mongoose error";
@@ -48,9 +52,9 @@ export = (err, req, res, next) => {
       code = 403;
       message = "No access";
       break;
-    case "USER_INVULNERABLE":
+    case "ALREADY_RENAMED":
       code = 403;
-      message = `this user have less than 50 soldiers OR you entered zero?!`;
+      message = `Already renamed it to your data`;
       break;
     default:
       code = 500;
