@@ -4,7 +4,7 @@ import env from "../env.config";
 import jwt from "jsonwebtoken";
 
 class SMTPemail {
-  static _idActivation(req, res) {
+  static _idActivation(req, res, next) {
     dotenv.config();
     let transporter = nodemailer.createTransport({
       service: "gmail",
@@ -14,26 +14,26 @@ class SMTPemail {
       },
     });
 
-    const token = jwt.sign(
-      {
-        username: req.bodyusername,
-        email: req.body.email,
-        phoneNumber: req.body.phoneNumber,
-        password: req.body.password,
-        birthDate: req.body.birthDate,
-        fullname: req.body.fullname,
-        subdistrict: req.body.subdistrict,
-        tournament: req.body.tournament,
-        role: req.body.role,
-        picture: req.file.path,
-      },
-      env.JWT_Activate,
-      {
-        expiresIn: "10m",
-      }
-    );
+    // const token = jwt.sign(
+    //   {
+    //     username: req.bodyusername,
+    //     email: req.body.email,
+    //     phoneNumber: req.body.phoneNumber,
+    //     password: req.body.password,
+    //     birthDate: req.body.birthDate,
+    //     fullname: req.body.fullname,
+    //     subdistrict: req.body.subdistrict,
+    //     tournament: req.body.tournament,
+    //     role: req.body.role,
+    //     picture: req.file.path,
+    //   },
+    //   env.JWT_Activate,
+    //   {
+    //     expiresIn: "10m",
+    //   }
+    // );
 
-    console.log(token);
+    const token = 12345;
 
     let mailOptions = {
       from: env.Email,
@@ -45,8 +45,8 @@ class SMTPemail {
             <img src="/Back-end/images/Game-Online-PUBG-Banner.jpg" style="width:100%;" alt="">
             <div class="container2" style="margin: 2em;">
                 <h2 style="color: rgb(255, 255, 255); ">We on behalf of ANN CUP welcome you to participate the biggest tournament in Indonesia</h2>
-                <p style="color: rgb(255, 255, 255);">Come on proud youth generation of Indonesia, be brave to compete and claim your throne, <strong> to validate your sign up please click on given link to activate your account:</strong></p>
-                <a style="color: cyan;">'${env.BE_Url}/${token}'</a>
+                <p style="color: rgb(255, 255, 255);">Come on proud youth generation of Indonesia, be brave to compete and claim your throne, <strong> to validate your sign up please copy on given link to activate your account:</strong></p>
+                <div style="background-color:red; width:5em;"><h3 style="color:cyan;">${token}</h3></div>
             </div>
         </div>
     </div>
@@ -56,12 +56,7 @@ class SMTPemail {
     transporter.sendMail(mailOptions, function (err, data) {
       if (err) {
         res.json({ Error: err });
-        // return console.log("ini error");
-      } else {
-        res.send({
-          message: `Email sent to ${req.body.email} on ${Date.now()}`,
-        });
-      }
+      } else next();
     });
   }
 }

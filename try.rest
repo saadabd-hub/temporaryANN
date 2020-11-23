@@ -9,8 +9,9 @@ POST http://localhost:3000/user/signin
 Content-Type: application/json
 
 {
-    "email":"asd",
-    "password":"asd"
+    "email":"talktomeself@gmail.com",
+    "password":"ghijklmne",
+    "verifyToken":12345
 }
 
 

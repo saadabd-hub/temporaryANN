@@ -12,7 +12,7 @@ export const userSchema = new mongoose.Schema(
     fullname: { type: String, required: true },
     subdistrict: { type: String, required: true },
     tournament: { type: String, default: "not participated yet" },
-    role: { type: Number, default: 4 },
+    role: { type: Number, default: 0 },
     picture: { type: String, required: true },
     resetLink: { data: String, default: "" },
   },

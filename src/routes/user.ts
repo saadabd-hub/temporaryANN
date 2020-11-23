@@ -35,15 +35,15 @@ router.post(
   "/signup",
   upload.single("picture"),
   userController.signup,
-  SMTPemail._idActivation
+  SMTPemail._idActivation,
+  userController.temporarySignup
 );
 
-router.post("/activate", userController.activate);
-
-// router.post("/signup", upload.single("picture"), userController.signup);
-
-router.post("/signin", userController.signin);
-
-// router.post("/test", SMTPemail.helloEmail);
+router.post(
+  "/signin",
+  userController.signin,
+  userController.proceed_signin,
+  userController.signedin
+);
 
 export default router;
