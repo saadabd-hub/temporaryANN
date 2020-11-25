@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import env from "../env.config";
+import env from "../env.config"
 
 const mongoLocal = "mongodb://localhost:27017/ANN";
 

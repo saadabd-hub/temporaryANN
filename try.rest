@@ -9,16 +9,16 @@ POST http://localhost:3000/user/signin
 Content-Type: application/json
 
 {
-    "email":"talktomeself@gmail.com",
-    "password":"ghijklmne",
-    "verifyToken":12345
+    "email":"naufalibnu75@gmail.com",
+    "password":"password",
+    "verifyToken":1822
 }
 
 
 ### see inbox
-GET http://localhost:3000/user/inbox/5fb5fd64a055fa0aa4322c20
+GET http://localhost:3000/user/inbox/5fbc73ec2853243ffc2cabed
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzNlYzI4NTMyNDNmZmMyY2FiZWQiLCJpYXQiOjE2MDYxODY4NTh9.tokQYg5SZCH4BLXVPj5F5-Tm85pJL-M70lPeSXSzFw4
 
 
 ### see profile

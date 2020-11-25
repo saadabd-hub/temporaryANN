@@ -6,7 +6,7 @@ class authorization {
       .then((user) => {
         if (user) {
           if (user._id.toString() === req._id) {
-            if (user.role === 4) {
+            if (user.role === "user") {
               next();
             } else
               throw {

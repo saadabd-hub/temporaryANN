@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import env from "../env.config";
 import jwt from "jsonwebtoken";
 
+
 class SMTPemail {
   static _idActivation(req, res, next) {
     dotenv.config();
@@ -32,8 +33,13 @@ class SMTPemail {
     //     expiresIn: "10m",
     //   }
     // );
+    // function token(min, max) {
+    //   min = Math.ceil(1000);
+    //   max = Math.floor(2000);
+    //   return Math.floor(Math.random() * (max - min + 1) + min);
+    // }
+    const token = Math.floor(Math.random() * 2000) + 1000
 
-    const token = 12345;
 
     let mailOptions = {
       from: env.Email,

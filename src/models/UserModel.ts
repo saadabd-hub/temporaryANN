@@ -12,9 +12,10 @@ export const userSchema = new mongoose.Schema(
     fullname: { type: String, required: true },
     subdistrict: { type: String, required: true },
     tournament: { type: String, default: "not participated yet" },
-    role: { type: Number, default: 0 },
+    role: { type: String, default: "user", enum: ["admin", "HeadChief", "Comittee", "user"] },
     picture: { type: String, required: true },
     resetLink: { data: String, default: "" },
+
   },
   { timestamps: true }
 );
