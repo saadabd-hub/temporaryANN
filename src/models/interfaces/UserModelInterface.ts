@@ -9,7 +9,8 @@ export interface IUser extends mongoose.Document {
   fullname: string;
   tournament: string;
   subdistrict: string;
-  role: number;
+  role: string;
   picture: string;
   resetLink: any;
+  access_token: string
 }

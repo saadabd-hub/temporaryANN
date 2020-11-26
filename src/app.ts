@@ -1,10 +1,15 @@
-import express from "express";
+import express, { NextFunction } from "express";
 import cors from "cors";
 import mongooseconnect from "../src/configs/mongoose";
 import routes from "../src/routes";
+import jwt from "jsonwebtoken";
+import User from "./models/UserModel";
+
+require('dotenv').config()
+
 
 const app = express();
-const PORT = 3000;
+const PORT = 3500;
 
 mongooseconnect();
 

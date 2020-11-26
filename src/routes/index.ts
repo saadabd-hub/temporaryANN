@@ -11,7 +11,7 @@ router.get("/", (req, res) => {
 });
 
 router.use("/user", userRouter);
-router.use(authentication);
+
 router.use("/user", UnregisteredUserTodoRouter);
 router.use(errorHandler);
 
