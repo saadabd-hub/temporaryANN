@@ -11,31 +11,27 @@ Content-Type: application/json
 {
     "email":"talktomeself@gmail.com",
     "password":"ghijklmne",
-    "verifyToken":12345
+    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDYyNDIwNDJ9.kWXhlI7lQPUsLcCbkxSXQ6i2Ov5JVRHFgXLbkM0puz8"
 }
 
 
 ### see inbox
-GET http://localhost:3000/user/inbox/5fb5fd64a055fa0aa4322c20
+GET http://localhost:3000/user/inbox/5fbc70f7a484c65004b44106
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzBmN2E0ODRjNjUwMDRiNDQxMDYiLCJpYXQiOjE2MDYxODUzMjl9.dT9qTuiYQE6BcyCt7jAI1yZH1kXY9M9-1UOhMjUx2do
 
 
 ### see profile
-GET  http://localhost:3000/user/profile/5fb5fd64a055fa0aa4322c20
+GET http://localhost:3000/user/profile/5fbc70f7a484c65004b44106
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzBmN2E0ODRjNjUwMDRiNDQxMDYiLCJpYXQiOjE2MDYxODUzMjl9.dT9qTuiYQE6BcyCt7jAI1yZH1kXY9M9-1UOhMjUx2do
 
 
 ### change profile
-PUT  http://localhost:3000/user/profile/5fb5fd64a055fa0aa4322c20
+PUT  http://localhost:3000/user/profile/5fbc70f7a484c65004b44106
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzBmN2E0ODRjNjUwMDRiNDQxMDYiLCJpYXQiOjE2MDYxODUzMjl9.dT9qTuiYQE6BcyCt7jAI1yZH1kXY9M9-1UOhMjUx2do
 
 {
     "fullname":"terara"
 }
-
-### test contact
-POST  http://localhost:3000/user/test
-Content-Type: application/json

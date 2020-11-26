@@ -1,0 +1,18 @@
+### LOGIN user
+POST http://localhost:3000/user/signin
+Content-Type: application/json
+
+{
+    "email":"elonMusk@gmail.com",
+    "password":"ghijklmne"
+}
+
+
+### assign HeadofSubdistrict
+PUT http://localhost:3000/admin/assign/5fbd4d58a768701d88a7c10b
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJkNGQ1OGE3Njg3MDFkODhhN2MxMGIiLCJpYXQiOjE2MDYyNDM2NzF9.9ssR53VoWckYGQDfgPBfh87dqfnt6LK19ahgcuxRUgQ
+
+{
+    "userId":"5fbd4e18a768701d88a7c10d"
+}

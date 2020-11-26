@@ -1,0 +1,44 @@
+
+### LOGIN user
+POST http://localhost:3000/user/signin
+Content-Type: application/json
+
+{
+    "email":"billGates@gmail.com",
+    "password":"ghijklmne"
+}
+
+
+### assign HeadofSubdistrict
+PUT http://localhost:3000/admin/assign/5fbd4d58a768701d88a7c10b
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJkNGQ1OGE3Njg3MDFkODhhN2MxMGIiLCJpYXQiOjE2MDYyNDM2NzF9.9ssR53VoWckYGQDfgPBfh87dqfnt6LK19ahgcuxRUgQ
+
+{
+    "userId":"5fbd4e18a768701d88a7c10d"
+}
+
+### assign err
+PUT http://localhost:3000/admin/assign/5fbd4e18a768701d88a7c10d
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJkNGUxOGE3Njg3MDFkODhhN2MxMGQiLCJpYXQiOjE2MDYyNDQ3ODd9.fOJ7KI3Jq5RGhpU8x3TVLP6ZZ4bLiMnrEGBwOlZFjzk
+
+
+### see inbox
+GET http://localhost:3000/user/inbox/5fbd4d58a768701d88a7c10b
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJkNGQ1OGE3Njg3MDFkODhhN2MxMGIiLCJpYXQiOjE2MDYyNDI0NDZ9.8a_BWSVOAaLGSBwDLVxAN2_VtMu8gmqFBVg15NEBHuE
+
+
+### see profile
+GET http://localhost:3000/user/profile/5fbd4d58a768701d88a7c10b
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJkNGQ1OGE3Njg3MDFkODhhN2MxMGIiLCJpYXQiOjE2MDYyNDI0NDZ9.8a_BWSVOAaLGSBwDLVxAN2_VtMu8gmqFBVg15NEBHuE
+
+
+### change profile
+PUT  http://localhost:3000/user/profile/5fbc70f7a484c65004b44106
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzBmN2E0ODRjNjUwMDRiNDQxMDYiLCJpYXQiOjE2MDYxODUzMjl9.dT9qTuiYQE6BcyCt7jAI1yZH1kXY9M9-1UOhMjUx2do
+
+{
+    "fullname":"terara"
+}

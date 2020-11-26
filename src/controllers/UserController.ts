@@ -2,8 +2,7 @@ import bcrypt from "bcrypt";
 import User from "../models/UserModel";
 import Inbox from "../models/InboxModel";
 import jwt from "jsonwebtoken";
-import env from "../env.config";
-
+require("dotenv").config();
 class UserController {
   static signup(req, res, next) {
     const { username, email, phoneNumber } = req.body;
@@ -85,18 +84,24 @@ class UserController {
     })
       .then((user) => {
         if (user?.role === 0) {
-          if (req.body.verifyToken === 12345) {
-            const userInbox = new Inbox({ _userId: user?._id });
-            userInbox
-              .save()
-              .then(() =>
-                User.findOneAndUpdate(
-                  { email: req.body.email },
-                  { $set: { role: 5 } }
-                )
-              );
-            next();
-          } else throw { name: "EXPIRED" };
+          var jwtActive: any = process.env.JWT_Activate;
+          const { verifyingToken } = req.body;
+          jwt.verify(verifyingToken, jwtActive, (err, decoded) => {
+            if (err) {
+              throw { name: "CODE_NOT_RECOGNIZE" };
+            } else {
+              const userInbox = new Inbox({ _userId: user?._id });
+              userInbox
+                .save()
+                .then(() =>
+                  User.findOneAndUpdate(
+                    { email: req.body.email },
+                    { $set: { role: 5 } }
+                  )
+                );
+              next();
+            }
+          });
         } else next();
       })
       .catch(next);
@@ -105,7 +110,10 @@ class UserController {
   static signedin(req, res, next) {
     User.findOne({ email: req.body.email })
       .then((user) => {
-        const access_token = jwt.sign({ _id: user?._id }, "ANNjaya");
+        var accesstoken: any = process.env.JWT_Accesstoken;
+        const access_token = jwt.sign({ _id: user?._id }, accesstoken, {
+          expiresIn: 100000,
+        });
         res.status(201).json({
           success: true,
           access_token,

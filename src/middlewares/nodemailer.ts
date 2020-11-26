@@ -1,6 +1,5 @@
 import nodemailer from "nodemailer";
 import * as dotenv from "dotenv";
-import env from "../env.config";
 import jwt from "jsonwebtoken";
 
 class SMTPemail {
@@ -9,48 +8,30 @@ class SMTPemail {
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: env.Email,
-        pass: env.Password,
+        user: process.env.Email,
+        pass: process.env.Password,
       },
     });
-
-    // const token = jwt.sign(
-    //   {
-    //     username: req.bodyusername,
-    //     email: req.body.email,
-    //     phoneNumber: req.body.phoneNumber,
-    //     password: req.body.password,
-    //     birthDate: req.body.birthDate,
-    //     fullname: req.body.fullname,
-    //     subdistrict: req.body.subdistrict,
-    //     tournament: req.body.tournament,
-    //     role: req.body.role,
-    //     picture: req.file.path,
-    //   },
-    //   env.JWT_Activate,
-    //   {
-    //     expiresIn: "10m",
-    //   }
-    // );
-
-    const token = 12345;
+    var jwtSecret: any = process.env.JWT_Activate;
+    const verifyingToken = jwt.sign(
+      {
+        username: req.bodyusername,
+      },
+      jwtSecret
+    );
 
     let mailOptions = {
-      from: env.Email,
+      from: process.env.Email,
       to: req.body.email,
-      subject: "Account Activation for ANN cup",
-      html: `
-        <div class="area" style="background-color: rgb(27, 27, 27); padding: 2em 0 2em 0;">
-        <div class="container" >
-            <img src="/Back-end/images/Game-Online-PUBG-Banner.jpg" style="width:100%;" alt="">
-            <div class="container2" style="margin: 2em;">
-                <h2 style="color: rgb(255, 255, 255); ">We on behalf of ANN CUP welcome you to participate the biggest tournament in Indonesia</h2>
-                <p style="color: rgb(255, 255, 255);">Come on proud youth generation of Indonesia, be brave to compete and claim your throne, <strong> to validate your sign up please copy on given link to activate your account:</strong></p>
-                <div style="background-color:red; width:5em;"><h3 style="color:cyan;">${token}</h3></div>
+      subject: "ANN cup Account Activation",
+      html: `       
+            <div class="container" style="margin-left:20em; margin-top:2em;" >
+                <img src="https://i.imgur.com/hB2n7OL.jpg" style="width: 40em; border-radius: 1em ; margin-bottom:0em;" alt="">
+                <div style="background-color:#141414;border-radius: 1em; margin-top:0em; width:40em;">
+                  <h4 style="color:cyan; word-wrap: break-word; width: 35em; padding:1em;">${verifyingToken}</h4>
+                </div>
             </div>
-        </div>
-    </div>
-      `,
+        `,
     };
 
     transporter.sendMail(mailOptions, function (err, data) {

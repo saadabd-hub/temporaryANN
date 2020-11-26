@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
-
+require("dotenv").config();
 export default (req, res, next) => {
   const { access_token } = req.headers;
+
   if (access_token) {
-    jwt.verify(access_token, "ANNjaya", (err, decoded) => {
+    var JWT_Accesstoken: any = process.env.JWT_Accesstoken;
+    jwt.verify(access_token, JWT_Accesstoken, (err, decoded) => {
       if (err) next({ name: "INVALID_TOKEN" });
       else {
         req._id = decoded._id;
