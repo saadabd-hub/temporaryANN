@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 require("dotenv").config();
+
 export default (req, res, next) => {
   const { access_token } = req.headers;
 
