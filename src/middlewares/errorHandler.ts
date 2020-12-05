@@ -8,9 +8,13 @@ export = (err, req, res, next) => {
       code = 409;
       message = "Either Username, Email, or Phonenumber already exist";
       break;
-    case "EXPIRED":
+    case "ALREADY_ASSIGNED":
+      code = 409;
+      message = "This user already assigned with such role";
+      break;
+    case "CODE_NOT_RECOGNIZE":
       code = 400;
-      message = "Link is expired";
+      message = "Verifying code is expired or false";
       break;
     case "MONGOOSE_ERROR":
       code = 500;
@@ -44,9 +48,9 @@ export = (err, req, res, next) => {
       code = 404;
       message = "Out of stock";
       break;
-    case "ADDRESS_NOT_FOUND":
+    case "USER_NOT_FOUND":
       code = 404;
-      message = "Address not found";
+      message = "This user does not exist";
       break;
     case "FORBIDDEN":
       code = 403;

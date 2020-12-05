@@ -7,23 +7,8 @@ import authentication from "../middlewares/authentication";
 
 const router = Router();
 
+router.post("/signup", userController.signup, userController.init);
 
-
-router.post(
-  "/signup",
-  upload.single("picture"),
-  userController.signup,
-  SMTPemail._idActivation,
-  userController.temporarySignup
-);
-
-router.post(
-  "/signin",
-  userController.login,
-  userController.proceed_signin,
-  // userController.signedin
-);
-
-router.get("/user", authentication, userController.allowifloggedin, userController.grantacsess('readAny', 'profile'), userController.getUsers)
+router.post("/signin", userController.signin);
 
 export default router;

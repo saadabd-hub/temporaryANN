@@ -1,0 +1,22 @@
+
+### LOGIN user
+POST http://localhost:5000/user/signin
+Content-Type: application/json
+
+{
+    "email":"C@gmail.com",
+    "password":"a"
+}
+
+### Submit participation
+POST http://localhost:5000/user/submit/5fc699db2422ea27609b3136
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM2OTlkYjI0MjJlYTI3NjA5YjMxMzYiLCJpYXQiOjE2MDY4NTExMjR9.XFdDPylM2ixHZaiPAE9UB9dRIYHuuWA0-tLAzVsbRNI
+
+{
+    "_id":"5fc699972422ea27609b3132",
+    
+        "_senderId":"5fc699db2422ea27609b3136",
+        "message":"p1rg"
+    
+}

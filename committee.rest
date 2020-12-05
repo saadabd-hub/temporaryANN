@@ -1,0 +1,72 @@
+### LOGIN user
+POST http://localhost:5000/user/signin
+Content-Type: application/json
+
+{
+    "email":"A@gmail.com",
+    "password":"a"
+}
+
+
+### SEE NOTIF user
+GET http://localhost:5000/user/inboxNotifications/5fc8499c3b2c50129ccca6d1
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM4NDk5YzNiMmM1MDEyOWNjY2E2ZDEiLCJpYXQiOjE2MDY5NjE5NjZ9.cGw_xEwOaksSIA6mivDmRwxKbBKLEQ_J9xZr-rC4RM0
+
+
+### SEE INBOX user
+GET http://localhost:5000/user/inbox/5fc8499c3b2c50129ccca6d1
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM4NDk5YzNiMmM1MDEyOWNjY2E2ZDEiLCJpYXQiOjE2MDY5NjE5NjZ9.cGw_xEwOaksSIA6mivDmRwxKbBKLEQ_J9xZr-rC4RM0
+
+
+
+### APPROVE user MANUALLY
+PUT http://localhost:5000/com/approve/5fc699972422ea27609b3130
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM2OTk5NzI0MjJlYTI3NjA5YjMxMzAiLCJpYXQiOjE2MDY4ODI1Mzh9.vAUxU93F9lS7GTTiLs3yryy14PfN7EPjgeTeCXRrDmw
+
+{
+
+}
+
+
+### APPROVE user AUTOMATICALLY through inbox
+PUT http://localhost:5000/com/approve/5fc699972422ea27609b3130
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM2OTk5NzI0MjJlYTI3NjA5YjMxMzAiLCJpYXQiOjE2MDY4ODI1Mzh9.vAUxU93F9lS7GTTiLs3yryy14PfN7EPjgeTeCXRrDmw
+
+{
+    "username":"",
+    "tournamentName":""
+}
+
+
+### Tournament Rules
+POST http://localhost:5000/com/createRules/5fc8499c3b2c50129ccca6d1
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM4NDk5YzNiMmM1MDEyOWNjY2E2ZDEiLCJpYXQiOjE2MDY5NjE5NjZ9.cGw_xEwOaksSIA6mivDmRwxKbBKLEQ_J9xZr-rC4RM0
+
+{
+    "rulesName":"22freeforall",
+    "age":21,
+    "subdistrict":"jelambar",
+    "minParticipant":4,
+    "maxParticipant":8
+}
+
+
+
+### Create Tournament
+POST http://localhost:5000/com/createGame/5fc8499c3b2c50129ccca6d1
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM4NDk5YzNiMmM1MDEyOWNjY2E2ZDEiLCJpYXQiOjE2MDY5NjE5NjZ9.cGw_xEwOaksSIA6mivDmRwxKbBKLEQ_J9xZr-rC4RM0
+
+{
+    "tournamentName":"Pubg",
+    "tournamentOpen":"2020-12-2",
+    "tournamentStart":"2020-12-25",
+    "tournamentClose":"2020-12-28",
+    "tournamentType":"freeforall",
+    "rulesName":"26freeforall"
+}

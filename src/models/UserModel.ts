@@ -1,32 +1,21 @@
 import * as mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { IUser } from "./interfaces/UserModelInterface";
+import IUser from "./interfaces/UserInterface";
 
 export const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true },
+    username: { type: String, required: true, unique: true, lowercase: true },
     email: { type: String, required: true, unique: true },
-    phoneNumber: { type: Number, required: true, unique: true },
     password: { type: String, required: true },
-    birthDate: { type: Date, required: true },
-    fullname: { type: String, required: true },
-    subdistrict: { type: String, required: true },
-    tournament: { type: String, default: "not participated yet" },
-    role: { type: String, default: "user", enum: ["admin", "HeadChief", "Comittee", "user"] },
-    picture: { type: String, required: true },
+    role: { type: String, default: "unregistered", lowercase: true },
     resetLink: { data: String, default: "" },
-
   },
   { timestamps: true }
 );
 
 userSchema.pre<IUser>("save", function (next) {
   User.findOne({
-    $or: [
-      { email: this.email },
-      { username: this.username },
-      { phoneNumber: this.phoneNumber },
-    ],
+    $or: [{ email: this.email }, { username: this.username }],
   })
     .then((user) => {
       if (user) {
@@ -40,5 +29,5 @@ userSchema.pre<IUser>("save", function (next) {
     .catch(next);
 });
 
-const User = mongoose.model<IUser>("user", userSchema);
+const User = mongoose.model<IUser>("User", userSchema);
 export default User;

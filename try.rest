@@ -1,41 +1,34 @@
 ### test
-POST http://localhost:3000/user/signup
-Content-Type: application/json
-# go to postman
-
-
-### LOGIN user
-POST http://localhost:3000/user/signin
+POST http://localhost:5000/user/signup
 Content-Type: application/json
 
 {
-    "email":"naufalibnu75@gmail.com",
-    "password":"password",
-    "verifyToken":1822
+    "email":"D@gmail.com",
+    "username":"user D",
+    "password":"a",
+    "birthDate":"1991-12-22",
+    "subDistrict":"Jelambar",
+    "phoneNumber":"08132221278242"
 }
 
 
-### see inbox
-GET http://localhost:3000/user/inbox/5fbc73ec2853243ffc2cabed
+### signin
+POST http://localhost:5000/user/signin
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzNlYzI4NTMyNDNmZmMyY2FiZWQiLCJpYXQiOjE2MDYxODY4NTh9.tokQYg5SZCH4BLXVPj5F5-Tm85pJL-M70lPeSXSzFw4
-
-
-### see profile
-GET  http://localhost:3000/user/profile/5fb5fd64a055fa0aa4322c20
-Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
-
-
-### change profile
-PUT  http://localhost:3000/user/profile/5fb5fd64a055fa0aa4322c20
-Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmI1ZmQ2NGEwNTVmYTBhYTQzMjJjMjAiLCJpYXQiOjE2MDU3NjgzNzN9.YgRB1K05D0KC-v_ym9WQTgCa0EvROqWJtdHwQzCtiOI
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM0YzQyNGMxNzQ1ZDU4NjQwZDI2YWMiLCJpYXQiOjE2MDY4MDMzNjl9.PeenQ1mUYimihUF2j2vaChEkNlfkzw_iGr3th8d2Qj0
 
 {
-    "fullname":"terara"
+    "email":"A@gmail.com",
+    "password":"a"
 }
 
-### test contact
-POST  http://localhost:3000/user/test
+
+
+
+
+
+### See Tournament
+GET http://localhost:5000/Gamewhatthefuckyouwant
 Content-Type: application/json
+
+
