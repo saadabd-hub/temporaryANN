@@ -1,13 +1,12 @@
 import Router from "express";
 import userRouter from "./user";
 import UnregisteredRouter from "./UnregisteredRoutes";
-import authentication from "../middlewares/authentication";
 import errorHandler from "../middlewares/errorHandler";
-import authorization from "../middlewares/authorization";
 import WebAdminRouter from "./WebAdminTodoRouter";
 import CommitteeRouter from "./CommitteeRoutes";
 import TournamentRouter from "./TournamentRoutes";
 import ProfileRouter from "./profile"
+import headchiefrouter from "./HeadofSubdistrictRoutes"
 
 
 const router = Router();
@@ -22,6 +21,7 @@ router.use("/user", UnregisteredRouter);
 router.use("/user", ProfileRouter);
 router.use("/com", CommitteeRouter);
 router.use("/admin", WebAdminRouter);
+router.use("/chief", headchiefrouter)
 
 router.use(errorHandler);
 

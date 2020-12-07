@@ -19,8 +19,7 @@ router.post(
 );
 
 router.put(
-  "/approve/:id",
-  // authorization.committee,
+  "/approve", authentication, authorization.allowifloggedin, authorization.grantacsess("updateOwn", "assignpart"),
   CommitteeController.approveSubmission
 );
 

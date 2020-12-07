@@ -1,10 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/UserModel";
-import Inbox from "../models/InboxModel";
-import UserProfile from "../models/User_ProfileModel";
 import _ from "lodash";
-import IUser from "../models/interfaces/UserInterface";
 require("dotenv").config();
 
 class UserController {
@@ -87,30 +84,20 @@ class UserController {
       })
       .catch(next);
   }
+  static forgotPassword(req, res, next) {
+    const { email } = req.body;
+    User.findOne({ email }, (err, user) => {
+      if (err || !user) {
+        console.log("masuk error", err);
 
-  static signedin(req, res, next) {
-    User.findOne({ email: req.body.email })
-      .then((user) => {
-        var accesstoken: any = process.env.JWT_Accesstoken;
-        const access_token = jwt.sign({ _id: user?._id }, accesstoken, {
-          expiresIn: 100000,
-        });
-        res.status(201).json({
-          success: true,
-          access_token,
-          user: [
-            {
-              email: user?.email,
-              username: user?.username,
-              picture: user?.picture,
-              tournament: user?.tournament,
-              subdistrict: user?.subdistrict,
-            },
-          ],
-        });
-      })
-      .catch(next);
+        throw { name: "USER_NOT_FOUND" };
+      } else {
+        console.log("masuk else");
 
+        next();
+      }
+    });
+  }
   static resetPassword(req, res, next) {
     const { resetLink, newPassword } = req.body;
     if (resetLink) {

@@ -91,7 +91,7 @@ class CommitteeController {
 
     try {
       if (user?._tournamentId == null) {
-        if (rules.maxParticipant == 8) {
+        if (rules.maxParticipant == 100) {
           if (rulesAge == userAge) {
             const userName: any = await User.findByIdAndUpdate(_userId, {
               $set: { role: "participant" },
@@ -102,7 +102,7 @@ class CommitteeController {
             );
             res.status(201).json({
               success: true,
-              message: `${userName.username} has been assigned to be ${userName.role} of ${tournament?.tournamentName}`,
+              message: `${userName.username} has been assigned to be an participant of ${tournament?.tournamentName}`,
             });
           } else {
             res.status(201).json({

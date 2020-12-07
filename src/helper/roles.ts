@@ -19,11 +19,13 @@ const roles = (function () {
         .updateOwn("profile")
         .readAny("profile")
         .create("rules")
+        .updateOwn("assignpart")
 
     ac.grant("headchief")
         .readOwn("profile")
         .createOwn("profile")
         .updateOwn("profile")
+        .updateOwn("assigncom")
 
     ac.grant("admin")
         .readOwn("profile")

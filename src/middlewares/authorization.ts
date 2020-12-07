@@ -2,7 +2,7 @@ import roles from "../helper/roles";
 import User from "../models/UserModel";
 
 class authorization {
-=======
+
   static grantacsess(action, resource) {
     return async (req, res, next) => {
       try {
@@ -17,7 +17,7 @@ class authorization {
         next(error)
       }
     }
->>>>>>> 226e86c
+
   }
   static async allowifloggedin(req, res, next) {
     try {
