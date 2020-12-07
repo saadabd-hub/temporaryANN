@@ -1,21 +1,4 @@
 import User from "../models/UserModel";
-<<<<<<< HEAD
-
-class WebAdminController {
-  static assignHeadofSubdistrict(req, res, next) {
-    const { userId } = req.body;
-
-    User.findById(userId)
-      .then((user) => {
-        if (user?.role != 2) {
-          const role = 2;
-          return User.findByIdAndUpdate(userId, { $set: { role } }).then(
-            res.send(`${user?.email}'s role assigned to 2`)
-          );
-        } else throw { name: "ALREADY_ASSIGNED" };
-      })
-      .catch(next);
-=======
 import Profile from "../models/User_ProfileModel"
 
 class WebAdminController {
@@ -36,7 +19,6 @@ class WebAdminController {
     else {
       res.status(403).send({ message: "you already assign the headchief of this subdistrict" })
     }
->>>>>>> 226e86c
   }
 }
 
