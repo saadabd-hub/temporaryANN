@@ -1,5 +1,5 @@
 import * as mongoose from "mongoose";
-import { Iinbox } from "../models/interfaces/InboxModelInterface";
+import Iinbox from "./interfaces/InboxInterface";
 
 const inboxSchema = new mongoose.Schema({
   _userId: {
@@ -7,17 +7,15 @@ const inboxSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  notifications: [
-    {
-      messages: String,
-      sent: { type: Date, default: Date.now() },
-      sender: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    },
-  ],
+  read: { type: Boolean, default: false },
+  _senderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  message: String,
+  sent: { type: Date, default: Date.now() },
 });
 
-const Inbox = mongoose.model<Iinbox>("inbox", inboxSchema);
+const Inbox = mongoose.model<Iinbox>("Inbox", inboxSchema);
 export default Inbox;

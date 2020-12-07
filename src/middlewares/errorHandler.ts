@@ -20,6 +20,10 @@ export = (err, req, res, next) => {
       code = 500;
       message = "mongoose error";
       break;
+    case "PROFILE_ADD":
+      code = 401;
+      message = "Profile already created ";
+      break;
     case "LOGIN_FAIL":
       code = 401;
       message = "Email or password combination not found";
@@ -48,9 +52,9 @@ export = (err, req, res, next) => {
       code = 404;
       message = "Out of stock";
       break;
-    case "ADDRESS_NOT_FOUND":
+    case "USER_NOT_FOUND":
       code = 404;
-      message = "Address not found";
+      message = "This user does not exist";
       break;
     case "FORBIDDEN":
       code = 403;

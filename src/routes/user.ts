@@ -1,49 +1,19 @@
 import Router from "express";
 import userController from "../controllers/UserController";
-import multer from "multer";
 import pagination from "../middlewares/pagination";
 import SMTPemail from "../middlewares/nodemailer";
+import upload from "../helper/multer";
+import authentication from "../middlewares/authentication";
+
 
 const router = Router();
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "images/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+router.post("/signup", userController.Signup, SMTPemail._idActivation);
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
+router.post("/signin", userController.signin, userController.proceed_signin);
 
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 5,
-  },
-  fileFilter: fileFilter,
-});
+router.put("/forget", userController.forgotPassword, SMTPemail.forgotPassword);
 
-router.post(
-  "/signup",
-  upload.single("picture"),
-  userController.signup,
-  SMTPemail._idActivation,
-  userController.temporarySignup
-);
-
-router.post(
-  "/signin",
-  userController.signin,
-  userController.proceed_signin,
-  userController.signedin
-);
+router.put("/reset", userController.resetPassword)
 
 export default router;

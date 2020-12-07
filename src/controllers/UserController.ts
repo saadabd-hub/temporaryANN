@@ -1,81 +1,74 @@
+import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/UserModel";
 import Inbox from "../models/InboxModel";
+<<<<<<< HEAD
 import jwt from "jsonwebtoken";
 require("dotenv").config();
+=======
+import UserProfile from "../models/User_ProfileModel";
+import _ from "lodash";
+import IUser from "../models/interfaces/UserInterface";
+require("dotenv").config();
+
+>>>>>>> 226e86c
 class UserController {
-  static signup(req, res, next) {
-    const { username, email, phoneNumber } = req.body;
-
-    const picture = req.file.path;
-
-    User.findOne({ $and: [{ username }, { email }, { phoneNumber }] })
-      .then((user) => {
-        if (user == null) {
-          next();
-        } else {
-          throw { name: "ALREADY_EXIST" };
-        }
-      })
-      .catch(next);
-  }
-
-  static temporarySignup(req, res, next) {
+  static Signup(req, res, next) {
     const {
       username,
       email,
-      phoneNumber,
       password,
-      birthDate,
-      fullname,
-      subdistrict,
       role,
     } = req.body;
 
-    const picture = req.file.path;
 
     const user = new User({
       username,
       email,
-      phoneNumber,
       password,
-      birthDate,
-      fullname,
-      subdistrict,
-      picture,
-      role,
+      role: role || "user"
     });
 
     user
       .save()
       .then((user) => {
-        return res.status(201).json({
+        if (!user) {
+          next(new Error)
+        }
+        else next()
+        res.status(201).json({
           success: true,
-          message: `Only one few step, a Verification code sent to ${
-            req.body.email
-          } on ${Date()}`,
-          data: user,
+          message: `Only one few step, a Verification code sent to ${req.body.email
+            } on ${Date()}`,
+          data: {
+            username: username,
+            email: email,
+          }
         });
       })
       .catch(next);
   }
 
-  static signin(req, res, next) {
-    const { email, username, password } = req.body;
-    User.findOne({ $or: [{ email }, { username }] })
-      .then((user) => {
-        if (user) {
-          if (user?.role > 0 && bcrypt.compareSync(password, user.password)) {
-            next();
-          } else if (
-            user?.role === 0 &&
-            bcrypt.compareSync(password, user.password)
-          ) {
-            next();
-          } else throw { name: "LOGIN_FAIL" };
-        } else throw { name: "NOT_FOUND" };
+
+  static async signin(req, res, next) {
+    try {
+      const { email, username, password } = req.body;
+      const user = await User.findOne({ $or: [{ email }, { username }] });
+      if (!user) return next({ name: "LOGIN_FAIL" });
+      const validPassword = await bcrypt.compareSync(password, user.password);
+      if (!validPassword) return next({ name: "NOT_FOUND" })
+      const secret_key = <string>process.env.JWT_Accesstoken
+
+      const access_token = jwt.sign({ _id: user._id }, secret_key, { expiresIn: '1d' });
+      await User.findByIdAndUpdate(user._id, { access_token })
+      res.status(200).json({
+        data: { email: user.email, role: user.role },
+        access_token,
+        msg: "logged in successfully"
       })
-      .catch(next);
+    } catch (error) {
+      next(error);
+    }
   }
 
   static proceed_signin(req, res, next) {
@@ -83,6 +76,7 @@ class UserController {
       $or: [{ email: req.body.email }, { username: req.body.username }],
     })
       .then((user) => {
+<<<<<<< HEAD
         if (user?.role === 0) {
           var jwtActive: any = process.env.JWT_Activate;
           const { verifyingToken } = req.body;
@@ -99,6 +93,16 @@ class UserController {
                     { $set: { role: 5 } }
                   )
                 );
+=======
+        if (user) {
+          const jwtActive: any = process.env.JWT_Activate;
+          const { verifyingToken } = req.body;
+          jwt.verify(verifyingToken, jwtActive, (err, decoded) => {
+            if (err) {
+              console.log(jwtActive)
+              next({ name: "CODE_NOT_RECOGNIZE" });
+            } else {
+>>>>>>> 226e86c
               next();
             }
           });
@@ -106,6 +110,7 @@ class UserController {
       })
       .catch(next);
   }
+<<<<<<< HEAD
 
   static signedin(req, res, next) {
     User.findOne({ email: req.body.email })
@@ -129,13 +134,57 @@ class UserController {
         });
       })
       .catch(next);
+=======
+  static forgotPassword(req, res, next) {
+    const { email } = req.body;
+    User.findOne({ email }, (err, user) => {
+      if (err || !user) {
+        console.log("masuk error", err);
+        throw { name: "USER_NOT_FOUND" };
+        next();
+      } else {
+        console.log("masuk else");
+        next();
+      }
+    });
+>>>>>>> 226e86c
   }
 
-  // static userlist(req, res, next) {
-  //   User.find().then((user) => {
-  //     res.json({ user });
-  //   });
-  // }
+  static resetPassword(req, res, next) {
+    const { resetLink, newPassword } = req.body;
+    if (resetLink) {
+      const jwtforgottoken: any = process.env.JWT_ForgotPassword;
+      jwt.verify(resetLink, jwtforgottoken, function (error, decodedData) {
+        if (error) {
+          throw { name: "INVALID_TOKEN" };
+        } else {
+          User.findOne({ resetLink }, (err, user) => {
+            if (err || !user) {
+              throw { name: "NOT_FOUND" };
+            } else {
+              const salt = bcrypt.genSaltSync(10);
+              const password = bcrypt.hashSync(newPassword, salt);
+              return User.findOneAndUpdate(
+                { resetLink },
+                { $set: { password } }
+              )
+                .then(() => {
+                  if (err) {
+                    throw { name: "INVALID_TOKEN" };
+                  } else {
+                    res.status(200).json({
+                      success: true,
+                      message: `Password successfully changed`,
+                    });
+                  }
+                })
+                .catch(next);
+            }
+          });
+        }
+      });
+    } else throw { name: "INVALID_TOKEN" };
+  }
 }
 
 export default UserController;

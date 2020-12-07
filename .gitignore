@@ -1,2 +1,5 @@
 node_modules
 env.config.ts
+.env
+freeforallModel.ts
+branchesModel.ts
