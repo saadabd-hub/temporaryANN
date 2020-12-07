@@ -2,16 +2,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/UserModel";
 import Inbox from "../models/InboxModel";
-<<<<<<< HEAD
-import jwt from "jsonwebtoken";
-require("dotenv").config();
-=======
 import UserProfile from "../models/User_ProfileModel";
 import _ from "lodash";
 import IUser from "../models/interfaces/UserInterface";
 require("dotenv").config();
 
->>>>>>> 226e86c
 class UserController {
   static Signup(req, res, next) {
     const {
@@ -76,24 +71,7 @@ class UserController {
       $or: [{ email: req.body.email }, { username: req.body.username }],
     })
       .then((user) => {
-<<<<<<< HEAD
-        if (user?.role === 0) {
-          var jwtActive: any = process.env.JWT_Activate;
-          const { verifyingToken } = req.body;
-          jwt.verify(verifyingToken, jwtActive, (err, decoded) => {
-            if (err) {
-              throw { name: "CODE_NOT_RECOGNIZE" };
-            } else {
-              const userInbox = new Inbox({ _userId: user?._id });
-              userInbox
-                .save()
-                .then(() =>
-                  User.findOneAndUpdate(
-                    { email: req.body.email },
-                    { $set: { role: 5 } }
-                  )
-                );
-=======
+
         if (user) {
           const jwtActive: any = process.env.JWT_Activate;
           const { verifyingToken } = req.body;
@@ -102,7 +80,6 @@ class UserController {
               console.log(jwtActive)
               next({ name: "CODE_NOT_RECOGNIZE" });
             } else {
->>>>>>> 226e86c
               next();
             }
           });
@@ -110,7 +87,6 @@ class UserController {
       })
       .catch(next);
   }
-<<<<<<< HEAD
 
   static signedin(req, res, next) {
     User.findOne({ email: req.body.email })
@@ -134,21 +110,6 @@ class UserController {
         });
       })
       .catch(next);
-=======
-  static forgotPassword(req, res, next) {
-    const { email } = req.body;
-    User.findOne({ email }, (err, user) => {
-      if (err || !user) {
-        console.log("masuk error", err);
-        throw { name: "USER_NOT_FOUND" };
-        next();
-      } else {
-        console.log("masuk else");
-        next();
-      }
-    });
->>>>>>> 226e86c
-  }
 
   static resetPassword(req, res, next) {
     const { resetLink, newPassword } = req.body;
