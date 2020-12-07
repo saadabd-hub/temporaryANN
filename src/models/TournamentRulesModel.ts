@@ -9,8 +9,8 @@ const tournamentRulesSchema = new mongoose.Schema({
   rulesName: { type: String, unique: true, required: true, lowercase: true },
 });
 
-const Tournament = mongoose.model<ItournamentRules>(
+const TournamentRules = mongoose.model<ItournamentRules>(
   "Rules",
   tournamentRulesSchema
 );
-export default Tournament;
+export default TournamentRules;

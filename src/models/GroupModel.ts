@@ -17,6 +17,7 @@ const GroupSchema = new mongoose.Schema({
     },
   ],
   groupName: { type: String, required: true, unique: true },
+  groupPict: { type: String }
 });
 
 const Group = mongoose.model<Igroup>("Group", GroupSchema);

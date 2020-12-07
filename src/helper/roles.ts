@@ -4,23 +4,32 @@ const ac = new AccessControl
 const roles = (function () {
     ac.grant("user")
         .readOwn("profile")
+        .createOwn("profile")
+        .updateOwn("profile")
+        .createOwn("submit", "user")
+
+    ac.grant("participant")
+        .readOwn("profile")
+        .createOwn("profile")
         .updateOwn("profile")
 
-    ac.grant("Comittee")
-        .extend("user")
+    ac.grant("comittee")
+        .readOwn("profile")
+        .createOwn("profile")
+        .updateOwn("profile")
         .readAny("profile")
+        .create("rules")
 
-    ac.grant("HeadChief")
-        .extend("user")
-        .extend("Comittee")
-        .updateAny("profile")
-        .deleteAny("profile")
+    ac.grant("headchief")
+        .readOwn("profile")
+        .createOwn("profile")
+        .updateOwn("profile")
 
     ac.grant("admin")
-        .extend("user")
-        .extend("Comittee")
-        .extend("HeadChief")
-        .readAny("profile")
+        .readOwn("profile")
+        .createOwn("profile")
+        .updateOwn("profile")
+        .updateAny("assign")
 
     return ac;
 })();

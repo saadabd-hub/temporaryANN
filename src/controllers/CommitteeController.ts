@@ -36,7 +36,7 @@ class CommitteeController {
           data: rules,
         });
       }
-    } catch {}
+    } catch { }
   }
 
   static async createTournament(req, res, next) {
@@ -47,6 +47,7 @@ class CommitteeController {
       tournamentClose,
       tournamentType,
       rulesName,
+      groupEntry,
     } = req.body;
 
     const tournament = await Tournament.findOne({ tournamentName });
@@ -64,6 +65,7 @@ class CommitteeController {
           tournamentClose,
           tournamentType,
           _tournamentRulesId: rules?._id,
+          groupEntry
         });
         tournament.save();
         return res.status(201).json({
@@ -74,7 +76,7 @@ class CommitteeController {
     }
   }
 
-  static async scanUser(req, res, next) {}
+  static async scanUser(req, res, next) { }
 
   static async approveSubmission(req, res, next) {
     const { _userId, _tournamentId } = req.body;
@@ -120,7 +122,7 @@ class CommitteeController {
           message: `Your champion has already participated in another game`,
         });
       }
-    } catch {}
+    } catch { }
   }
 }
 

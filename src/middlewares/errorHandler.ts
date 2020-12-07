@@ -20,6 +20,10 @@ export = (err, req, res, next) => {
       code = 500;
       message = "mongoose error";
       break;
+    case "PROFILE_ADD":
+      code = 401;
+      message = "Profile already created ";
+      break;
     case "LOGIN_FAIL":
       code = 401;
       message = "Email or password combination not found";

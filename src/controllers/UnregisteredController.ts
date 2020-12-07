@@ -9,18 +9,25 @@ class unregistered {
       _userId: _CommitteeId,
     });
     const tournament: any = await Tournament.findOne({
-      tournamentName: message,
+      tournamentName: message
     });
+    const group = await Tournament.findOne({ groupEntry: false })
     if (inboxes == null || inboxes) {
       const sender = await Inbox.findOne({ _senderId: req.params.id });
       const entry = await Inbox.find({ _senderId: req.params.id, message });
       if (sender && entry.length != 0) {
         res.send("Already submitted");
+        console.log("ajods")
       } else {
         if (!tournament) {
           res.send("Tournament not found");
         } else {
-          next();
+          if (!group) {
+            res.send("Tournament must be a group")
+          }
+          else {
+            next()
+          }
         }
       }
     } else {

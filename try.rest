@@ -3,25 +3,31 @@ POST http://localhost:5000/user/signup
 Content-Type: application/json
 
 {
-    "email":"D@gmail.com",
-    "username":"user D",
-    "password":"a",
-    "birthDate":"1991-12-22",
-    "subDistrict":"Jelambar",
-    "phoneNumber":"08132221278242"
+    "email":"naufalibnu75@gmail.com",
+    "username":"user",
+    "password":"a"
 }
 
 
 ### signin
 POST http://localhost:5000/user/signin
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM0YzQyNGMxNzQ1ZDU4NjQwZDI2YWMiLCJpYXQiOjE2MDY4MDMzNjl9.PeenQ1mUYimihUF2j2vaChEkNlfkzw_iGr3th8d2Qj0
+
 
 {
-    "email":"A@gmail.com",
-    "password":"a"
+    "email":"naufalibnu75@gmail.com",
+    "password":"a",
+    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDcyMzY3NzB9.cjbGr1LlK9Hwn-3pJV7aydwUFj6KEBawNEEXYVrc9kM"
 }
 
+### Forgot Password
+POST http://localhost:5000/user/forget
+Content-Type: application/json
+
+
+{
+    "email":"naufalibnu75@gmail.com",
+}
 
 
 

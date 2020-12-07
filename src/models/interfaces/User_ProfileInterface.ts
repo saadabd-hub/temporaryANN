@@ -8,4 +8,5 @@ export default interface IUserProfile extends mongoose.Document {
   subDistrict: String;
   phoneNumber: String;
   fullname: String;
+  picture: String;
 }

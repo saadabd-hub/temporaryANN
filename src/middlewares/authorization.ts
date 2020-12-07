@@ -1,74 +1,38 @@
+import roles from "../helper/roles";
 import User from "../models/UserModel";
 
 class authorization {
-  static unregistered(req, res, next) {
-    User.findById(req.params.id)
-      .then((user) => {
-        if (user) {
-          if (user._id.toString() === req._id) {
-            if (user.role === "unregistered") {
-              next();
-            } else
-              throw {
-                name: "FORBIDDEN",
-              };
-          } else
-            throw {
-              name: "FORBIDDEN",
-            };
-        } else
-          throw {
-            name: "NOT_FOUND",
-          };
-      })
-      .catch(next);
+  static grantacsess(action, resource) {
+    return async (req, res, next) => {
+      try {
+        const permission = roles.can(req.user.role)[action](resource);
+        if (!permission.granted) {
+          return res.status(401).json({
+            error: "You don't have enough permission to perform this action"
+          });
+        }
+        next()
+      } catch (error) {
+        next(error)
+      }
+    }
   }
+  static async allowifloggedin(req, res, next) {
+    try {
+      const user = res.locals.loggedInUser;
 
-  static participant(req, res, next) {
-    User.findById(req.params.id)
-      .then((user) => {
-        if (user) {
-          if (user._id.toString() === req._id) {
-            if (user.role === "participant") {
-              next();
-            } else
-              throw {
-                name: "FORBIDDEN",
-              };
-          } else
-            throw {
-              name: "FORBIDDEN",
-            };
-        } else
-          throw {
-            name: "NOT_FOUND",
-          };
-      })
-      .catch(next);
-  }
+      if (!user) {
+        console.log(user);
 
-  static committee(req, res, next) {
-    User.findById(req.params.id)
-      .then((user) => {
-        if (user) {
-          if (user._id.toString() === req._id) {
-            if (user.role === "committee") {
-              next();
-            } else
-              throw {
-                name: "FORBIDDEN",
-              };
-          } else
-            throw {
-              name: "FORBIDDEN",
-            };
-        } else
-          throw {
-            name: "NOT_FOUND",
-          };
-      })
-      .catch(next);
+        return res.status(401).json({
+          error: "You need to be logged in to access this route"
+        });
+      }
+      req.user = user;
+      next();
+    } catch (error) {
+      next(error);
+    }
   }
 }
-
 export default authorization;

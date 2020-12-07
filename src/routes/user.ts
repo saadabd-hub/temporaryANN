@@ -5,10 +5,15 @@ import SMTPemail from "../middlewares/nodemailer";
 import upload from "../helper/multer";
 import authentication from "../middlewares/authentication";
 
+
 const router = Router();
 
-router.post("/signup", userController.signup, userController.init);
+router.post("/signup", userController.Signup, SMTPemail._idActivation);
 
-router.post("/signin", userController.signin);
+router.post("/signin", userController.signin, userController.proceed_signin);
+
+router.put("/forget", userController.forgotPassword, SMTPemail.forgotPassword);
+
+router.put("/reset", userController.resetPassword)
 
 export default router;
