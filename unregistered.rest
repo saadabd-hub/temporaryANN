@@ -4,19 +4,62 @@ POST http://localhost:5000/user/signin
 Content-Type: application/json
 
 {
-    "email":"C@gmail.com",
-    "password":"a"
+    "username":"b",
+    "password":"abc"
 }
 
-### Submit participation
-POST http://localhost:5000/user/submit/5fc699db2422ea27609b3136
+
+### SEE profile
+GET http://localhost:5000/user/profile/5fd10555249a1e08745312c6
 Content-Type: application/json
-access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmM2OTlkYjI0MjJlYTI3NjA5YjMxMzYiLCJpYXQiOjE2MDY4NTExMjR9.XFdDPylM2ixHZaiPAE9UB9dRIYHuuWA0-tLAzVsbRNI
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
+
+
+### EDIT profile
+PUT http://localhost:5000/user/profile/5fd10555249a1e08745312c6
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
 
 {
-    "_id":"5fc699972422ea27609b3132",
-    
-        "_senderId":"5fc699db2422ea27609b3136",
-        "message":"p1rg"
-    
+   "fullname":"samuji parangin" 
 }
+
+
+### SUBMIT participation
+POST http://localhost:5000/user/submit/5fd10555249a1e08745312c6
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
+
+{
+    "_CommitteeId":"5fd0b0291ad02c425044c659",
+    "message":"dota"
+}
+
+
+### SUBMIT group
+POST http://localhost:5000/user/submitGroup/5fd10555249a1e08745312c6
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
+
+{
+    "_CommitteeId":"5fd0b0291ad02c425044c659",
+    "message":"[dota,Cruxiates,5fd19319d95e6f444c0148d7,5fd1936fd95e6f444c0148da]"
+      
+}
+
+
+### SEE notification
+GET http://localhost:5000/user/inboxNotifications/5fd10555249a1e08745312c6
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
+
+
+### SEE inbox
+GET http://localhost:5000/user/inbox/5fd10555249a1e08745312c6
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
+
+### redir
+GET http://localhost:5000/user/lempar/5fd10555249a1e08745312c6
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U

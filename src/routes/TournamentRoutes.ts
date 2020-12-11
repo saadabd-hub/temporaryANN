@@ -8,4 +8,8 @@ router.get("/:tournament", function (req, res) {
   res.send(`now you're about entering ${game} arena`);
 });
 
+router.get("/hallOfFame", function (req, res) {
+  res.send(`Hall of Fame`);
+});
+
 export default router;

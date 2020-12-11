@@ -5,26 +5,35 @@ import Tournament from "../models/TournamentModel";
 import TournamentRules from "../models/TournamentRulesModel";
 import TournamentReport from "../models/TournamentReportModel";
 import TournamentStage from "../models/TournamentStageModel";
+import Group from "../models/GroupModel";
 import Inbox from "../models/InboxModel";
 import moment from "moment";
 
 class CommitteeController {
   static async createRules(req, res, next) {
     const {
-      rulesName,
+      groupMember,
       age,
       subdistrict,
       minParticipant,
       maxParticipant,
     } = req.body;
+    const member: any =
+      !groupMember || groupMember == undefined || groupMember == null
+        ? 1
+        : groupMember;
+    const rulesName: any = `${age}_${member}_${subdistrict}`;
+
     try {
       const rules = await Rules.findOne({ rulesName });
       if (rules) {
-        res.send("throw ga kebaca");
-        // throw { name: "ALREADY_EXIST" };
+        console.log(!groupMember);
+
+        next({ name: "RULES_EXIST" });
       } else {
         const rules = new Rules({
           rulesName,
+          groupMember,
           age,
           subdistrict,
           minParticipant,
@@ -36,7 +45,9 @@ class CommitteeController {
           data: rules,
         });
       }
-    } catch { }
+    } catch {
+      next({ name: "NOT_FOUND" });
+    }
   }
 
   static async createTournament(req, res, next) {
@@ -49,80 +60,149 @@ class CommitteeController {
       rulesName,
       groupEntry,
     } = req.body;
-
+    const open: number = new Date(tournamentOpen).valueOf();
+    const start: number = new Date(tournamentStart).valueOf();
+    const close: number = new Date(tournamentClose).valueOf();
+    const now: number = Date.now().valueOf();
     const tournament = await Tournament.findOne({ tournamentName });
     if (tournament) {
-      res.send("Tournament sudah ada");
+      next({ name: "TOURNAMENT_EXIST" });
     } else {
       const rules = await TournamentRules.findOne({ rulesName });
       if (!rules) {
-        res.send("rules not found");
+        next({ name: "RULES_NOT_FOUND" });
       } else {
-        const tournament = await new Tournament({
-          tournamentName,
-          tournamentOpen,
-          tournamentStart,
-          tournamentClose,
-          tournamentType,
-          _tournamentRulesId: rules?._id,
-          groupEntry
-        });
-        tournament.save();
-        return res.status(201).json({
-          success: true,
-          message: `${tournamentName} tournament has successfully created`,
-        });
+        if (close > start && start > open && open > now) {
+          const tournament = await new Tournament({
+            tournamentName,
+            tournamentOpen,
+            tournamentStart,
+            tournamentClose,
+            tournamentType,
+            _tournamentRulesId: rules?._id,
+            groupEntry,
+          });
+          tournament.save();
+          return res.status(201).json({
+            success: true,
+            message: `${tournamentName} tournament has successfully created`,
+          });
+        } else {
+          next({ name: "TIME_ERR" });
+        }
       }
     }
   }
 
-  static async scanUser(req, res, next) { }
-
   static async approveSubmission(req, res, next) {
-    const { _userId, _tournamentId } = req.body;
-    const user = await UserProfile.findOne({ _userId });
+    const { participant, _tournamentId, _userId, _groupId } = req.body;
+
     const tournament = await Tournament.findById(_tournamentId);
+    const tournamentRule: any = await TournamentRules.findOne({
+      _id: tournament?._tournamentRulesId,
+    });
+
+    const lists: any = await TournamentReport.findOne({
+      _tournamentId,
+      stageName: "participantList",
+    });
+    const user: any = await UserProfile.findOne({
+      _userId: participant[0]._userId,
+    });
+
     const birthdate: any = user?.birthDate.valueOf();
     const datenow = Date.now();
     const userAge = Math.floor((datenow - birthdate) / 31536000000);
     const rules: any = await Rules.findById(tournament?._tournamentRulesId);
     const rulesAge: any = rules?.age;
-    const registered: any = await UserProfile.findOne({ _tournamentId });
 
-    try {
-      if (user?._tournamentId == null) {
-        if (rules.maxParticipant == 100) {
-          if (rulesAge == userAge) {
-            const userName: any = await User.findByIdAndUpdate(_userId, {
-              $set: { role: "participant" },
-            });
-            await UserProfile.findOneAndUpdate(
-              { _userId },
-              { $set: { _tournamentId } }
-            );
-            res.status(201).json({
-              success: true,
-              message: `${userName.username} has been assigned to be an participant of ${tournament?.tournamentName}`,
-            });
+    if (user._tournamentId == null) {
+      if (user.subDistrict == tournamentRule.subdistrict) {
+        if (tournament != null) {
+          if (tournament.groupEntry == false) {
+            if (tournamentRule.age == userAge) {
+              if (tournamentRule.maxParticipant >= lists.participant.length) {
+                const userName: any = await User.findByIdAndUpdate(
+                  participant[0]._userId,
+                  {
+                    $set: { role: "participant" },
+                  }
+                );
+
+                await UserProfile.findOneAndUpdate(
+                  { _userId: participant[0]._userId },
+                  { $set: { _tournamentId } }
+                );
+
+                await TournamentReport.findOneAndUpdate(
+                  { _tournamentId },
+                  { $push: { participant } }
+                );
+
+                res.status(201).json({
+                  success: true,
+                  message: `${participant[0]._userId.username} has been assigned to be an participant of ${tournament?.tournamentName}`,
+                });
+              } else {
+                next({ name: "LIMIT_REACHED" });
+              }
+            } else {
+              next({ name: "REQUIREMENT_NOT_MET" });
+            }
           } else {
-            res.status(201).json({
-              success: false,
-              message: `Tournament requirement is ${rulesAge}, but your champion is now ${userAge}`,
-            });
+            next({ name: "GROUP_NEEDED" });
           }
         } else {
-          res.status(201).json({
-            success: false,
-            message: `Exceed max player limit`,
-          });
+          next({ name: "TOURNAMENT_NOT_FOUND" });
         }
       } else {
-        res.status(201).json({
-          success: false,
-          message: `Your champion has already participated in another game`,
-        });
+        next({ name: "REQUIREMENT_NOT_MET" });
       }
-    } catch { }
+    } else {
+      next({ name: "ALREADY_PARTICIPATED" });
+    }
+  }
+
+  static async approveGroup(req, res, next) {
+    const {
+      participant,
+      _tournamentId,
+      groupName,
+      _userId,
+      _groupId,
+    } = req.body;
+
+    const entity = participant[0]._userId || participant[0]._groupId;
+    const group = await Group.findOne({ _id: entity });
+    const tournament = await Tournament.findById(_tournamentId);
+    const tournamentRule: any = await TournamentRules.findOne({
+      _id: tournament?._tournamentRulesId,
+    });
+    // const lists: any = await TournamentReport.findOne({
+    //   _tournamentId,
+    //   stageName: "participantList",
+    // });
+    const user: any = await UserProfile.findOne({
+      _userId: entity,
+    });
+    // const registered: any = await UserProfile.findOne({
+    //   _userId: entity,
+    // });
+
+    if (user._tournamentId == null) {
+      if (tournamentRule.groupMember == group?.member.length) {
+        const userName: any = await Group.findByIdAndUpdate(entity, {
+          $set: { _tournamentId },
+        });
+
+        res.status(201).json({
+          success: true,
+          message: `${userName.groupName} has been assigned to be an participant of ${tournament?.tournamentName}`,
+        });
+      } else {
+        res.send("kekurangan ato kelebihan");
+      }
+    }
   }
 }
 

@@ -8,4 +8,7 @@ export default interface Igroup extends mongoose.Document {
     }
   ];
   groupName: string;
+  age: number;
+  subDistrict: string;
+  groupPict: string;
 }

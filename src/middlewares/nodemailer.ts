@@ -6,7 +6,6 @@ require("dotenv").config();
 
 class SMTPemail {
   static _idActivation(req, res, next) {
-    dotenv.config();
     let transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -39,7 +38,18 @@ class SMTPemail {
     transporter.sendMail(mailOptions, function (err, data) {
       if (err) {
         res.json({ Error: err });
-      } else next();
+      } else {
+        res.status(201).json({
+          success: true,
+          message: `Only one few step, a Verification code sent to ${
+            req.body.email
+          } on ${Date()}`,
+          data: {
+            username: req.body.username,
+            email: req.body.email,
+          },
+        });
+      }
     });
   }
 

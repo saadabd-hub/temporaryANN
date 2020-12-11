@@ -3,10 +3,45 @@ POST http://localhost:5000/user/signup
 Content-Type: application/json
 
 {
-<<<<<<< HEAD
     "email":"talktomeself@gmail.com",
-    "password":"ghijklmne",
-    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDYyNDIwNDJ9.kWXhlI7lQPUsLcCbkxSXQ6i2Ov5JVRHFgXLbkM0puz8"
+    "username":"a",
+    "password":"a"
+}
+
+
+### test
+POST http://localhost:5000/user/signin
+Content-Type: application/json
+
+{ 
+    "username":"a",
+    "password":"a",
+    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDc1MDA1MTV9.tM_gYbG6zlbV1sqDBmGZ3_MVzEFcSy744RE6ZQ8tzgg",
+    "birthDate":"1990-11-28",
+    "subDistrict":"jelambar",
+    "phoneNumber":"081323568932",
+    "fullname":"panthera"
+}
+
+
+
+### FORGOT password
+PUT http://localhost:5000/user/forget
+Content-Type: application/json
+
+{ 
+    "email":"talktomeself@gmail.com"
+}
+
+
+### RESET password
+PUT http://localhost:5000/user/reset
+Content-Type: application/json
+
+{ 
+    "email":"talktomeself@gmail.com",
+    "resetLink":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRhbGt0b21lc2VsZkBnbWFpbC5jb20iLCJpYXQiOjE2MDc1MjY0NTl9.RbHPeAso182YbN3R6vzsPEXj1Dmn5XV9eDDR4tslNYE",
+    "newPassword":"abc"
 }
 
 
@@ -30,40 +65,3 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzBmN2E0ODRjN
 {
     "fullname":"terara"
 }
-=======
-    "email":"naufalibnu75@gmail.com",
-    "username":"user",
-    "password":"a"
-}
-
-
-### signin
-POST http://localhost:5000/user/signin
-Content-Type: application/json
-
-
-{
-    "email":"naufalibnu75@gmail.com",
-    "password":"a",
-    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDcyMzY3NzB9.cjbGr1LlK9Hwn-3pJV7aydwUFj6KEBawNEEXYVrc9kM"
-}
-
-### Forgot Password
-POST http://localhost:5000/user/forget
-Content-Type: application/json
-
-
-{
-    "email":"naufalibnu75@gmail.com",
-}
-
-
-
-
-
-### See Tournament
-GET http://localhost:5000/Gamewhatthefuckyouwant
-Content-Type: application/json
-
-
->>>>>>> 226e86c

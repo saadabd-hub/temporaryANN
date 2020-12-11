@@ -1,105 +1,110 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt, { hash } from "bcrypt";
+// const bcrypt = require("bcrypt");
 import User from "../models/UserModel";
+import UserProfile from "../models/User_ProfileModel";
 import _ from "lodash";
 require("dotenv").config();
 
 class UserController {
-  static Signup(req, res, next) {
-    const {
-      username,
-      email,
-      password,
-      role,
-    } = req.body;
+  static async signup(req, res, next) {
+    const { username, email, password } = req.body;
+    const emailCheck = await User.findOne({ email });
+    const usernameCheck = await User.findOne({ username });
 
-
-    const user = new User({
-      username,
-      email,
-      password,
-      role: role || "user"
-    });
-
-    user
-      .save()
-      .then((user) => {
-        if (!user) {
-          next(new Error)
-        }
-        else next()
-        res.status(201).json({
-          success: true,
-          message: `Only one few step, a Verification code sent to ${req.body.email
-            } on ${Date()}`,
-          data: {
-            username: username,
-            email: email,
-          }
+    if (emailCheck) {
+      next({ name: "EMAIL_EXIST" });
+    } else {
+      if (usernameCheck) {
+        next({ name: "USERNAME_EXIST" });
+      } else {
+        const user = new User({
+          username,
+          email,
+          password,
         });
-      })
-      .catch(next);
-  }
-
-
-  static async signin(req, res, next) {
-    try {
-      const { email, username, password } = req.body;
-      const user = await User.findOne({ $or: [{ email }, { username }] });
-      if (!user) return next({ name: "LOGIN_FAIL" });
-      const validPassword = await bcrypt.compareSync(password, user.password);
-      if (!validPassword) return next({ name: "NOT_FOUND" })
-      const secret_key = <string>process.env.JWT_Accesstoken
-
-      const access_token = jwt.sign({ _id: user._id }, secret_key, { expiresIn: '1d' });
-      await User.findByIdAndUpdate(user._id, { access_token })
-      res.status(200).json({
-        data: { email: user.email, role: user.role },
-        access_token,
-        msg: "logged in successfully"
-      })
-    } catch (error) {
-      next(error);
+        user.save();
+        next();
+      }
     }
   }
 
-  static proceed_signin(req, res, next) {
-    User.findOne({
-      $or: [{ email: req.body.email }, { username: req.body.username }],
-    })
-      .then((user) => {
+  static async signin(req, res, next) {
+    const {
+      email,
+      username,
+      password,
+      verifyingToken,
+      birthDate,
+      subDistrict,
+      phoneNumber,
+      fullname,
+    } = req.body;
+    const Check: any = await User.findOne({ $or: [{ email }, { username }] });
+    const Pass: any = bcrypt.compare(password, Check?.password);
+    const Profile: any = await UserProfile.findOne({ _userId: Check._id });
 
-        if (user) {
-          const jwtActive: any = process.env.JWT_Activate;
-          const { verifyingToken } = req.body;
-          jwt.verify(verifyingToken, jwtActive, (err, decoded) => {
-            if (err) {
-              console.log(jwtActive)
-              next({ name: "CODE_NOT_RECOGNIZE" });
-            } else {
-              next();
-            }
-          });
-        } else next();
-      })
-      .catch(next);
-  }
-  static forgotPassword(req, res, next) {
-    const { email } = req.body;
-    User.findOne({ email }, (err, user) => {
-      if (err || !user) {
-        console.log("masuk error", err);
-
-        throw { name: "USER_NOT_FOUND" };
-      } else {
-        console.log("masuk else");
-
+    if ((await Check) && (await Pass)) {
+      if (Profile) {
         next();
+        // res.send("to next atas");
+      } else {
+        const secret: any = process.env.JWT_Activate;
+        jwt.verify(verifyingToken, secret, (err, decoded) => {
+          if (err) {
+            next({ name: "INVALID_TOKEN" });
+          } else {
+            const profile = new UserProfile({
+              _userId: Check._id,
+              birthDate,
+              subDistrict,
+              phoneNumber,
+              fullname,
+            });
+            profile.save();
+            next();
+            // res.send("updated and next");
+          }
+        });
       }
-    });
+    } else {
+      next({ name: "NOT_FOUND" });
+    }
   }
+
+  static async proceed_signin(req, res, next) {
+    const { email, username } = req.body;
+    const Found: any = await User.findOne({ $or: [{ email }, { username }] });
+    const secret_key: any = process.env.JWT_Accesstoken;
+    const access_token: any = jwt.sign({ _id: Found._id }, secret_key);
+    const Res = res.status(201).json({
+      success: true,
+      message: `${username || email} has successfully login`,
+      access_token,
+    });
+    if (Found.role == "unregistered") {
+      await User.findOneAndUpdate(
+        { $or: [{ email }, { username }] },
+        { $set: { role: "user" } }
+      );
+      Res;
+    } else {
+      Res;
+    }
+  }
+
+  static async forgotPassword(req, res, next) {
+    const { email } = req.body;
+    const Check: any = await User.findOne({ email });
+    if (Check) {
+      next();
+    } else {
+      next({ name: "USER_NOT_FOUND" });
+    }
+  }
+
   static resetPassword(req, res, next) {
-    const { resetLink, newPassword } = req.body;
+    const { resetLink, newPassword, email } = req.body;
     if (resetLink) {
       const jwtforgottoken: any = process.env.JWT_ForgotPassword;
       jwt.verify(resetLink, jwtforgottoken, function (error, decodedData) {
@@ -120,9 +125,14 @@ class UserController {
                   if (err) {
                     throw { name: "INVALID_TOKEN" };
                   } else {
-                    res.status(200).json({
-                      success: true,
-                      message: `Password successfully changed`,
+                    User.findOneAndUpdate(
+                      { email },
+                      { $set: { resetLink: null } }
+                    ).then(() => {
+                      res.status(200).json({
+                        success: true,
+                        message: `Password successfully changed`,
+                      });
                     });
                   }
                 })

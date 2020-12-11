@@ -1,0 +1,19 @@
+[{
+    "_userId": {
+        "$oid": "5fd10555249a1e08745312c6"
+    },
+    "_tournamentId": {
+        "$oid": "5fd190fbc132a345708aa569"
+    },
+    "stageName": "participantList"
+},
+{ 
+    "_userId": {
+        "$oid": "5fd19319d95e6f444c0148d7"
+    },
+    "_tournamentId": {
+        "$oid": "5fd190fbc132a345708aa569"
+    },
+    "stageName": "participantList"
+}
+]

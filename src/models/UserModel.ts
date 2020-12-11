@@ -1,35 +1,39 @@
 import * as mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import IUser from "./interfaces/UserInterface";
-import crypto from "crypto";
 
 export const userSchema = new mongoose.Schema(
   {
-    username: { type: String, required: true, unique: true, lowercase: true },
+    username: { type: String, required: true, unique: true },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, default: "User", enum: ["admin", "headchief", "comittee", "participant", "user"], lowercase: true },
+    role: {
+      type: String,
+      default: "unregistered",
+      enum: [
+        "admin",
+        "headchief",
+        "comittee",
+        "participant",
+        "user",
+        "unregistered",
+      ],
+      lowercase: true,
+    },
     resetLink: { data: String, default: "" },
   },
   { timestamps: true }
 );
 
-userSchema.pre<IUser>("save", function (next) {
-  User.findOne({
-    $or: [{ email: this.email }, { username: this.username }],
-  })
-    .then((user) => {
-      if (user) {
-        throw { name: "ALREADY_EXIST" };
-      } else {
-        const salt = bcrypt.genSaltSync(10);
-        this.password = bcrypt.hashSync(this.password, salt);
-        next();
-      }
-    })
-    .catch(next);
+userSchema.pre<IUser>("save", async function (next) {
+  try {
+    const salt: any = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
-
 
 const User = mongoose.model<IUser>("User", userSchema);
 export default User;

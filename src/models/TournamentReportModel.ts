@@ -2,15 +2,19 @@ import * as mongoose from "mongoose";
 import ItournamentReport from "./interfaces/TournamentReportInterface";
 
 const tournamentReportSchema = new mongoose.Schema({
-  _groupId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Group",
-  },
-  _userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-  score: Number,
+  participant: [
+    {
+      _groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Group",
+      },
+      _userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      score: Number,
+    },
+  ],
   _tournamentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Tournament",
@@ -29,12 +33,12 @@ const tournamentReportSchema = new mongoose.Schema({
       "third",
       "final",
     ],
-    default: "shuffle",
+    default: "participantList",
   },
 });
 
 const TournamentReport = mongoose.model<ItournamentReport>(
-  "Result",
+  "Report",
   tournamentReportSchema
 );
 export default TournamentReport;

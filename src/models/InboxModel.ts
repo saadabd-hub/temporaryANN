@@ -13,7 +13,7 @@ const inboxSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
-  message: String,
+  message: [String],
   sent: { type: Date, default: Date.now() },
 });
 

@@ -1,4 +1,4 @@
-export = (err, req, res, next) => {
+const errorHandling = (err, req, res, next) => {
   let code: number;
   let name: string = err.name;
   let message: string;
@@ -6,7 +6,52 @@ export = (err, req, res, next) => {
   switch (name) {
     case "ALREADY_EXIST":
       code = 409;
-      message = "Either Username, Email, or Phonenumber already exist";
+      message = "Either Username or Email already exist";
+      break;
+    case "ALREADY_SUBMITTED":
+      code = 409;
+      message =
+        "You already submitted to this tournament, please wait for further announcement";
+      break;
+    case "ALREADY_PARTICIPATED":
+      code = 409;
+      message = "This user is already a participant of another game";
+      break;
+    case "TOURNAMENT_EXIST":
+      code = 409;
+      message = "Tournament already exist";
+      break;
+    case "RULES_EXIST":
+      code = 409;
+      message = "Rules already exist";
+      break;
+    case "RULES_NOT_FOUND":
+      code = 409;
+      message = "Rules not found";
+      break;
+    case "TOURNAMENT_NOT_FOUND":
+      code = 409;
+      message = "Tournament not found";
+      break;
+    case "EMAIL_EXIST":
+      code = 409;
+      message = "Email already exist";
+      break;
+    case "USERNAME_EXIST":
+      code = 409;
+      message = "Username already exist";
+      break;
+    case "PROFILE_EXIST":
+      code = 409;
+      message = "Phone Number already exist";
+      break;
+    case "GROUP_NEEDED":
+      code = 409;
+      message = "Must be enter as a group to this tournament";
+      break;
+    case "INDIVIDUAL_NEEDED":
+      code = 409;
+      message = "Must be enter as an individual to this tournament";
       break;
     case "ALREADY_ASSIGNED":
       code = 409;
@@ -38,7 +83,11 @@ export = (err, req, res, next) => {
       break;
     case "NOT_FOUND":
       code = 404;
-      message = "Email or Password combination not found";
+      message = "Either Username or Email or Password combination not found";
+      break;
+    case "REQUIREMENT_NOT_MET":
+      code = 404;
+      message = "This user doesn't met the requirement";
       break;
     case "BANNED":
       code = 404;
@@ -48,9 +97,17 @@ export = (err, req, res, next) => {
       code = 404;
       message = "Are you trying to break in";
       break;
-    case "NOT_ENOUGH":
+    case "TIME_ERR":
       code = 404;
-      message = "Out of stock";
+      message = "Time logic error please check the date";
+      break;
+    case "NOT_AUTHORIZE":
+      code = 404;
+      message = `This user don't have authorization for such task`;
+      break;
+    case "LIMIT_REACHED":
+      code = 404;
+      message = `Exceed max player limit`;
       break;
     case "USER_NOT_FOUND":
       code = 404;
@@ -72,3 +129,5 @@ export = (err, req, res, next) => {
   }
   res.status(code).json({ success: false, message });
 };
+
+export default errorHandling;

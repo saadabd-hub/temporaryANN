@@ -18,9 +18,9 @@ export const userProfileSchema = new mongoose.Schema(
     },
     birthDate: { type: Date, required: true },
     subDistrict: { type: String, required: true, lowercase: true },
-    phoneNumber: { type: String, unique: true },
+    phoneNumber: { type: String, unique: true, required: true },
     fullname: { type: String, required: true },
-    picture: { type: String }
+    picture: { type: String },
   },
   { timestamps: true, collection: "Profile", autoIndex: true }
 );

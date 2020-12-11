@@ -2,73 +2,73 @@ import User from "../models/UserModel";
 import Profile from "../models/User_ProfileModel";
 
 class ProfileController {
-    static async UserProfile(req, res, next) {
-        const { birthDate, fullname, subDistrict, phoneNumber, } = req.body
-        const { id } = req.params
-        const user = await User.findById(id)
-        const picture = req.file.path
-        const profile = new Profile({
-            _userId: id,
-            birthDate,
-            fullname,
-            subDistrict,
-            phoneNumber,
-            picture,
-        })
-        const userprofile = await Profile.findOne({ _userId: id })
+  //   static async UserProfile(req, res, next) {
+  //     const { birthDate, fullname, subDistrict, phoneNumber } = req.body;
+  //     const { id } = req.params;
+  //     const user = await User.findById(id);
+  //     const picture = req.file.path;
+  //     const profile = new Profile({
+  //       _userId: id,
+  //       birthDate,
+  //       fullname,
+  //       subDistrict,
+  //       phoneNumber,
+  //       picture,
+  //     });
+  //     const userprofile = await Profile.findOne({ _userId: id });
 
-        if (userprofile) {
-            next({ name: "PROFILE_ADD" })
-        }
-        else {
-            profile.save()
-            res.status(201).send({
-                success: true, message: "Profile Created", profile
-            })
-        }
-    }
+  //     if (userprofile) {
+  //       next({ name: "PROFILE_ADD" });
+  //     } else {
+  //       profile.save();
+  //       res.status(201).send({
+  //         success: true,
+  //         message: "Profile Created",
+  //         profile,
+  //       });
+  //     }
+  //   }
 
-    static seeProfile(req, res, next) {
-        const { id } = req.params
-        Profile.findOne({ _userId: id })
-            .then((user) => {
-                if (user) {
-                    res.status(200).json({
-                        user: [
-                            {
-                                picture: user?.picture,
-                                fullname: user?.fullname,
-                                phoneNumber: user?.phoneNumber,
-                                birthDate: user?.birthDate.toDateString(),
-                                tournament: user?._tournamentId,
-                                subDistrict: user?.subDistrict,
-                                groupName: user?._groupId
-                            },
-                        ],
-                    });
-                } else throw { name: "NOT_FOUND" };
-            })
-            .catch(next);
-    }
+  static seeProfile(req, res, next) {
+    const { id } = req.params;
+    Profile.findOne({ _userId: id })
+      .then((user) => {
+        if (user) {
+          res.status(200).json({
+            user: [
+              {
+                picture: user?.picture,
+                fullname: user?.fullname,
+                phoneNumber: user?.phoneNumber,
+                birthDate: user?.birthDate.toDateString(),
+                tournament: user?._tournamentId,
+                subDistrict: user?.subDistrict,
+                groupName: user?._groupId,
+              },
+            ],
+          });
+        } else throw { name: "NOT_FOUND" };
+      })
+      .catch(next);
+  }
 
-    static changeProfile(req, res, next) {
-        const { id } = req.params
-        const { fullname } = req.body
-        Profile.findOne({ _userId: id })
-            .then((user) => {
-                if (user && user.fullname != fullname) {
-                    return Profile.findOneAndUpdate(
-                        { _userId: id },
-                        { fullname }
-                    ).then((user) => {
-                        res.status(200).json({
-                            message: `successfuly renamed to ${fullname}`,
-                        });
-                    });
-                } else throw { name: "ALREADY_RENAMED" };
-            })
-            .catch(next);
-    }
+  static changeProfile(req, res, next) {
+    const { id } = req.params;
+    const { fullname } = req.body;
+    Profile.findOne({ _userId: id })
+      .then((user) => {
+        if (user && user.fullname != fullname) {
+          return Profile.findOneAndUpdate({ _userId: id }, { fullname }).then(
+            (user) => {
+              res.status(200).json({
+                message: `successfuly renamed to ${fullname}`,
+              });
+            }
+          );
+        } else throw { name: "ALREADY_RENAMED" };
+      })
+      .catch(next);
+  }
 }
 
-export default ProfileController
+export default ProfileController;

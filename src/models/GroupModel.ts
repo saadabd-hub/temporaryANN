@@ -5,7 +5,6 @@ const GroupSchema = new mongoose.Schema({
   _tournamentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Tournament",
-    required: true,
   },
   member: [
     {
@@ -16,8 +15,10 @@ const GroupSchema = new mongoose.Schema({
       },
     },
   ],
-  groupName: { type: String, required: true, unique: true },
-  groupPict: { type: String }
+  groupName: { type: String, required: true, unique: true, lowercase: true },
+  age: { type: Number, required: true },
+  subDistrict: { type: String, required: true },
+  groupPict: String,
 });
 
 const Group = mongoose.model<Igroup>("Group", GroupSchema);

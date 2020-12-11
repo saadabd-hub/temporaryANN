@@ -5,22 +5,47 @@ import CommitteeController from "../controllers/CommitteeController";
 import authentication from "../middlewares/authentication";
 const router = Router();
 
+// router.post(
+//   "/createRules", authentication,
+//   authorization.allowifloggedin, authorization.grantacsess("create", "rules"),
+//   CommitteeController.createRules
+// );
 router.post(
-  "/createRules", authentication,
-  authorization.allowifloggedin, authorization.grantacsess("create", "rules"),
+  "/createRules/:id",
+  authorization.comittee,
   CommitteeController.createRules
 );
 
+// router.post(
+//   "/createGame",
+//   authentication,
+//   authorization.allowifloggedin,
+//   authorization.grantacsess("create", "rules"),
+//   CommitteeController.createTournament
+// );
 router.post(
-  "/createGame",
-  authentication,
-  authorization.allowifloggedin, authorization.grantacsess("create", "rules"),
+  "/createGame/:id",
+  authorization.comittee,
   CommitteeController.createTournament
 );
 
+// router.put(
+//   "/approve",
+//   authentication,
+//   authorization.allowifloggedin,
+//   authorization.grantacsess("updateOwn", "assignpart"),
+//   CommitteeController.approveSubmission
+// );
 router.put(
-  "/approve", authentication, authorization.allowifloggedin, authorization.grantacsess("updateOwn", "assignpart"),
+  "/approve/:id",
+  authorization.comittee,
   CommitteeController.approveSubmission
+);
+
+router.put(
+  "/approveGroup/:id",
+  authorization.comittee,
+  CommitteeController.approveGroup
 );
 
 export default router;
