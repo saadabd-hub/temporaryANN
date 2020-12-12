@@ -17,9 +17,17 @@ const errorHandling = (err, req, res, next) => {
       code = 409;
       message = "This user is already a participant of another game";
       break;
+    case "ALREADY_IN_GROUP":
+      code = 409;
+      message = "You are already part of a group";
+      break;
     case "TOURNAMENT_EXIST":
       code = 409;
       message = "Tournament already exist";
+      break;
+    case "ALREADY_LATE":
+      code = 409;
+      message = "Tournament already begun, can't approve any submission";
       break;
     case "RULES_EXIST":
       code = 409;
@@ -36,6 +44,10 @@ const errorHandling = (err, req, res, next) => {
     case "EMAIL_EXIST":
       code = 409;
       message = "Email already exist";
+      break;
+    case "GROUP_EXIST":
+      code = 409;
+      message = "Group already exist";
       break;
     case "USERNAME_EXIST":
       code = 409;
@@ -65,6 +77,10 @@ const errorHandling = (err, req, res, next) => {
       code = 500;
       message = "mongoose error";
       break;
+    case "STAGE_ERROR":
+      code = 500;
+      message = "Stage sequence doesn't match";
+      break;
     case "PROFILE_ADD":
       code = 401;
       message = "Profile already created ";
@@ -84,6 +100,10 @@ const errorHandling = (err, req, res, next) => {
     case "NOT_FOUND":
       code = 404;
       message = "Either Username or Email or Password combination not found";
+      break;
+    case "DIFFERENT_SUBDISTRICT":
+      code = 404;
+      message = "This user from another subdistrict";
       break;
     case "REQUIREMENT_NOT_MET":
       code = 404;

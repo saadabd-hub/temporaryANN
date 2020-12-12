@@ -40,13 +40,13 @@ Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 {
-    "tournamentName":"Dota",
-    "tournamentOpen":"2020-12-20",
-    "tournamentStart":"2020-12-25",
-    "tournamentClose":"2020-12-28",
+    "tournamentName":"csgo",
+    "tournamentOpen":"2021-12-20",
+    "tournamentStart":"2021-12-25",
+    "tournamentClose":"2021-12-28",
     "tournamentType":"freeforall",
     "rulesName":"23_1_jelambar",
-    "groupEntry":true
+    "groupEntry":false
 }
 
 ### SEE notification
@@ -62,16 +62,32 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyY
 
 
 
+### APPROVE group AUTOMATICALLY through inbox
+PUT http://localhost:5000/comittee/approve/5fd0b0291ad02c425044c659
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
+
+{
+    "participant":[
+        {
+        "_groupId":"5fd2756c21692d48847c2cf7"  
+    }
+    ],
+    "_tournamentId":"5fd3abe80db961494422a610"
+}
+
+
+
 ### APPROVE user AUTOMATICALLY through inbox
 PUT http://localhost:5000/comittee/approve/5fd0b0291ad02c425044c659
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 {
-    "participant":[{
-        "_userId":"5fd1936fd95e6f444c0148da"  
-    },{
-        "_userId":"5fd1941ad95e6f444c0148dc"
-    }],
-    "_tournamentId":"5fd1e6964918f72b2cdc84f5"
+    "participant":[
+        {
+        "_userId":"5fd1941ad95e6f444c0148dc"  
+        }
+    ],
+    "_tournamentId":"5fd3abe80db961494422a610"
 }

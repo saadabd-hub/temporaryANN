@@ -143,6 +143,31 @@ class UserController {
       });
     } else throw { name: "INVALID_TOKEN" };
   }
+
+  static tournamentAvailable(req, res, next) {
+    // const data= await TournamentReport.find ({_tournamentId,stageName:'participantList'})
+    // const tournament= await Tournament.findOne ({_tournamentId})
+    // const rules= await TournamentRules.findOne ({tournament._tournamentRulesId})
+    // if(rules.maxParticipant >= data.participant.length )
+  }
+
+  static seeTournamentList(req, res, next) {
+    // pagination
+    // search pake regex
+    // const tournament= await Tournament.find()
+    // res.json({ tournament})
+  }
+
+  static seeTournamentDetail(req, res, next) {
+    // const tournament= await Tournament.findbyid(_id)
+    // const tournamentrules =await TournamentRules.findbyid(tournament._tournamentRulesId)
+    // res.json({ tournament, tournamentrules})
+  }
+
+  static seeHallOfFame(req, res, next) {
+    // const winner= await TournamentReport.find(_id,stageName:'result')
+    // res.json({winner})
+  }
 }
 
 export default UserController;

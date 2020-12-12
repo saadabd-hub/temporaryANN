@@ -134,7 +134,7 @@ class unregistered {
   }
 
   static async createGroup(req, res, next) {
-    const { groupName, age, subDistrict } = req.body;
+    const { groupName } = req.body;
 
     const myself: any = await UserProfile.findOne({ _userId: req.params.id });
     const group: any = await Group.findOne({ groupName });
@@ -154,17 +154,20 @@ class unregistered {
         });
         groups.save();
 
-        // await Group.findOneAndUpdate(
-        //   { groupName },
-        //   { $push: { member: users } }
-        // );
+        await UserProfile.findOneAndUpdate(
+          { _userId: req.params.id },
+          { $set: { _groupId: groups._id } }
+        );
 
-        res.send("kebikin");
+        res.status(201).json({
+          success: true,
+          message: `${groupName} successfully created, with you as a leader`,
+        });
       } else {
-        res.send("udah ada");
+        next({ name: "GROUP_EXIST" });
       }
     } else {
-      res.send("lo udah punya group");
+      next({ name: "ALREADY_IN_GROUP" });
     }
   }
 
@@ -177,20 +180,55 @@ class unregistered {
     });
 
     const birthdate: any = user.birthDate.valueOf();
+    const MYbirthdate: any = myself.birthDate.valueOf();
     const datenow = Date.now();
     const userAge = Math.floor((datenow - birthdate) / 31536000000);
+    const MYAge = Math.floor((datenow - MYbirthdate) / 31536000000);
 
     if (user.subDistrict === myself.subDistrict) {
       if (user._tournamentId == null || undefined) {
-        console.log(user.fullname, userAge);
-
-        res.send("lanjut");
+        if (user._groupId == null || undefined) {
+          if (userAge == MYAge) {
+            await Group.findByIdAndUpdate(myself._groupId, {
+              $push: { member },
+            });
+            await UserProfile.findByIdAndUpdate(user._id, {
+              $set: { _groupId: myself._groupId },
+            });
+            res.status(201).json({
+              success: true,
+              message: `${user.fullname} has successfully join group`,
+            });
+          } else {
+            next({ name: "REQUIREMENT_NOT_MET" });
+          }
+        } else {
+          next({ name: "ALREADY_IN_GROUP" });
+        }
       } else {
-        res.send("udah ikut lomba");
+        next({ name: "ALREADY_PARTICIPATED" });
       }
     } else {
-      res.send("beda subdistrict");
+      next({ name: "DIFFERENT_SUBDISTRICT" });
     }
+  }
+
+  static async groupKick(req, res, next) {
+    // kick member dari group
+  }
+
+  static async groupEditProfile(req, res, next) {
+    // const group = await Group.findbyid(_id)
+    // multer
+    // Group.findbyidandUpdate(_id,{$set:{groupPict}})
+  }
+
+  static async attendTournament(req, res, next) {
+    // const my = await UserProfile.findOne({_userId:req.params.id})
+    // const tournament= await Tournament.findbyid(my._tournamentId)
+    // const stage= await TournamentReport.findOne({_tournamentId})
+    // if(stage.stageName:'aboutToBegin')
+    // await TournamentReport.findOne ({_tournamentId:my._tournamentId},{$push:{participant}})
   }
 }
 

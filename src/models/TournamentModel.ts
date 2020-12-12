@@ -19,6 +19,18 @@ const tournamentSchema = new mongoose.Schema({
     ref: "Rules",
     required: true,
   },
+  _tournamentReportId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Report",
+  },
+  // stageName: {
+  //   type: String,
+  //   default: "participantList",
+  // },
+  stageName: {
+    type: Number,
+    default: 0,
+  },
   tournamentPict: { type: String },
 });
 

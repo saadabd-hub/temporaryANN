@@ -1,3 +1,4 @@
+import { shuffle } from "lodash";
 import User from "../models/UserModel";
 import UserProfile from "../models/User_ProfileModel";
 import Rules from "../models/TournamentRulesModel";
@@ -50,6 +51,10 @@ class CommitteeController {
     }
   }
 
+  static async editRules(req, res, next) {
+    // edit rules turnamen
+  }
+
   static async createTournament(req, res, next) {
     const {
       tournamentName,
@@ -83,15 +88,27 @@ class CommitteeController {
             groupEntry,
           });
           tournament.save();
-          return res.status(201).json({
+          const tournamentReport = new TournamentReport({
+            _tournamentId: tournament._id,
+          });
+
+          tournamentReport.save();
+
+          res.status(201).json({
             success: true,
             message: `${tournamentName} tournament has successfully created`,
           });
+
+          next();
         } else {
           next({ name: "TIME_ERR" });
         }
       }
     }
+  }
+
+  static async editTournament(req, res, next) {
+    // edit tanggal turnamen, type turnamen
   }
 
   static async approveSubmission(req, res, next) {
@@ -101,10 +118,14 @@ class CommitteeController {
     const tournamentRule: any = await TournamentRules.findOne({
       _id: tournament?._tournamentRulesId,
     });
+    const tournamentReport: any = await TournamentReport.findOne({
+      _tournamentId,
+    });
 
     const lists: any = await TournamentReport.findOne({
       _tournamentId,
-      stageName: "participantList",
+      stageName: 0,
+      // stageName: "participantList",
     });
     const user: any = await UserProfile.findOne({
       _userId: participant[0]._userId,
@@ -117,46 +138,53 @@ class CommitteeController {
     const rulesAge: any = rules?.age;
 
     if (user._tournamentId == null) {
-      if (user.subDistrict == tournamentRule.subdistrict) {
-        if (tournament != null) {
-          if (tournament.groupEntry == false) {
-            if (tournamentRule.age == userAge) {
-              if (tournamentRule.maxParticipant >= lists.participant.length) {
-                const userName: any = await User.findByIdAndUpdate(
-                  participant[0]._userId,
-                  {
-                    $set: { role: "participant" },
-                  }
-                );
+      if (tournamentReport.stageName === 0) {
+        if (user.subDistrict == tournamentRule.subdistrict) {
+          if (tournament != null) {
+            if (tournament.groupEntry == false) {
+              if (tournamentRule.age == userAge) {
+                if (
+                  tournamentRule.maxParticipant >=
+                  lists.participant.length + 1
+                ) {
+                  const userName: any = await User.findByIdAndUpdate(
+                    participant[0]._userId,
+                    {
+                      $set: { role: "participant" },
+                    }
+                  );
 
-                await UserProfile.findOneAndUpdate(
-                  { _userId: participant[0]._userId },
-                  { $set: { _tournamentId } }
-                );
+                  await UserProfile.findOneAndUpdate(
+                    { _userId: participant[0]._userId },
+                    { $set: { _tournamentId } }
+                  );
 
-                await TournamentReport.findOneAndUpdate(
-                  { _tournamentId },
-                  { $push: { participant } }
-                );
+                  await TournamentReport.findOneAndUpdate(
+                    { _tournamentId },
+                    { $push: { participant } }
+                  );
 
-                res.status(201).json({
-                  success: true,
-                  message: `${participant[0]._userId.username} has been assigned to be an participant of ${tournament?.tournamentName}`,
-                });
+                  res.status(201).json({
+                    success: true,
+                    message: `${user.fullname} has been assigned to be an participant of ${tournament?.tournamentName}`,
+                  });
+                } else {
+                  next({ name: "LIMIT_REACHED" });
+                }
               } else {
-                next({ name: "LIMIT_REACHED" });
+                next({ name: "REQUIREMENT_NOT_MET" });
               }
             } else {
-              next({ name: "REQUIREMENT_NOT_MET" });
+              next({ name: "GROUP_NEEDED" });
             }
           } else {
-            next({ name: "GROUP_NEEDED" });
+            next({ name: "TOURNAMENT_NOT_FOUND" });
           }
         } else {
-          next({ name: "TOURNAMENT_NOT_FOUND" });
+          next({ name: "DIFFERENT_SUBDISTRICT" });
         }
       } else {
-        next({ name: "REQUIREMENT_NOT_MET" });
+        next({ name: "ALREADY_LATE" });
       }
     } else {
       next({ name: "ALREADY_PARTICIPATED" });
@@ -203,6 +231,100 @@ class CommitteeController {
         res.send("kekurangan ato kelebihan");
       }
     }
+  }
+
+  static async seeParticipantList(req, res, next) {
+    const { _id } = req.body;
+    const lists: any = await TournamentReport.findById(_id);
+    res.status(201).json({
+      success: true,
+      data: lists.participant,
+    });
+  }
+
+  static async shufflingParticipantList(req, res, next) {
+    const { _id } = req.body;
+    const participant: any = await TournamentReport.findById(_id);
+    const shuffled: any = shuffle(participant.participant);
+
+    const tournament: any = await Tournament.findById(
+      participant._tournamentId
+    );
+
+    if (tournament.stageName === participant.stageName) {
+      const stageName: number = (await participant.stageName) + 1;
+      const tournamentReport = new TournamentReport({
+        _tournamentId: participant._tournamentId,
+        participant: shuffled,
+        stageName,
+      });
+
+      tournamentReport.save();
+      const update: any = await Tournament.findByIdAndUpdate(
+        participant._tournamentId,
+        { $set: { stageName: tournamentReport.stageName } }
+      );
+
+      res.status(201).json({
+        success: true,
+        message: `${update.tournamentName} has been moving to next stage`,
+      });
+    } else {
+      next({ name: "STAGE_ERROR" });
+    }
+  }
+
+  static async proceedBranchesTournament(req, res, next) {
+    const { _id } = req.body;
+
+    const participant: any = await TournamentReport.findById(_id);
+    const shuffled: any = shuffle(participant.participant);
+
+    const tournament: any = await Tournament.findById(
+      participant._tournamentId
+    );
+
+    if (tournament.stageName === participant.stageName) {
+      for (let i = 0, j = shuffled.length; i < j; i += 2) {
+        const temparray = shuffled.slice(i, i + 2);
+
+        const stageName: number = (await participant.stageName) + 1;
+        const tournamentReport = new TournamentReport({
+          _tournamentId: participant._tournamentId,
+          participant: temparray,
+          stageName,
+        });
+
+        tournamentReport.save();
+        const update: any = await Tournament.findByIdAndUpdate(
+          participant._tournamentId,
+          { $set: { stageName: tournamentReport.stageName } }
+        );
+
+        res.status(201).json({
+          success: true,
+          message: `${update.tournamentName} has been moving to next stage`,
+        });
+      }
+    } else {
+      next({ name: "STAGE_ERROR" });
+    }
+  }
+
+  static async proceedFreeForAllTournament(req, res, next) {
+    // mulai lomba free for all
+  }
+
+  static async putScore(req, res, next) {
+    // naruh score ke peserta
+  }
+
+  static async finishingStage(req, res, next) {
+    // nge ganti stage turnamen branches
+  }
+
+  static async postTournamentResult(req, res, next) {
+    // nge post turnamen result
   }
 }
 

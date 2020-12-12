@@ -48,4 +48,24 @@ router.put(
   CommitteeController.approveGroup
 );
 
+router.get(
+  "/seeList/:id",
+  authorization.comittee,
+  CommitteeController.seeParticipantList
+);
+
+router.put("/startFreeForAll/:id");
+
+router.put(
+  "/shuffle/:id",
+  authorization.comittee,
+  CommitteeController.shufflingParticipantList
+);
+
+router.put(
+  "/branches/:id",
+  authorization.comittee,
+  CommitteeController.proceedBranchesTournament
+);
+
 export default router;

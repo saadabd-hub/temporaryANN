@@ -40,4 +40,10 @@ router.post(
   UnregisteredController.createGroup
 );
 
+router.put(
+  "/groupRecruit/:id",
+  authorization.user,
+  UnregisteredController.groupRecruit
+);
+
 export default router;
