@@ -443,17 +443,6 @@ class CommitteeController {
     }
   }
 
-  // static async startBranchesTournament(req, res, next) {
-  //   const { _id } = req.body;
-  //   const report: any = await TournamentReport.findById(_id);
-  //   const tournament: any = await Tournament.findById(report._tournamentId);
-
-  //   if(tournament.stageName==0){
-  //     res.send()
-  //   }
-
-  // }
-
   static async proceedFreeForAllTournament(req, res, next) {
     // mulai lomba free for all
   }
