@@ -3,9 +3,9 @@ POST http://localhost:5000/user/signup
 Content-Type: application/json
 
 {
-    "email":"talktomeself@gmail.com",
-    "username":"a",
-    "password":"a"
+    "email":"jurukuncicpm@gmail.com",
+    "username":"x",
+    "password":"x"
 }
 
 
@@ -14,9 +14,9 @@ POST http://localhost:5000/user/signin
 Content-Type: application/json
 
 { 
-    "username":"a",
-    "password":"a",
-    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2MDc1MDA1MTV9.tM_gYbG6zlbV1sqDBmGZ3_MVzEFcSy744RE6ZQ8tzgg",
+    "email":"jurukuncicpm@gmail.com",
+    "password":"x",
+    "verifyingToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRhbGt0b21lc2VsZkBnbWFpbC5jb20iLCJpYXQiOjE2MDc3NTc2MjB9.xDVmCPb_2txzWZGJFnI0xki-hYAPmpnQQC6D8hyxipM",
     "birthDate":"1990-11-28",
     "subDistrict":"jelambar",
     "phoneNumber":"081323568932",

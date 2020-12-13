@@ -47,11 +47,10 @@ class UserController {
     if ((await Check) && (await Pass)) {
       if (Profile) {
         next();
-        // res.send("to next atas");
       } else {
         const secret: any = process.env.JWT_Activate;
         jwt.verify(verifyingToken, secret, (err, decoded) => {
-          if (err) {
+          if (decoded.email != email || decoded.username != username) {
             next({ name: "INVALID_TOKEN" });
           } else {
             const profile = new UserProfile({
@@ -63,7 +62,6 @@ class UserController {
             });
             profile.save();
             next();
-            // res.send("updated and next");
           }
         });
       }
@@ -108,7 +106,7 @@ class UserController {
     if (resetLink) {
       const jwtforgottoken: any = process.env.JWT_ForgotPassword;
       jwt.verify(resetLink, jwtforgottoken, function (error, decodedData) {
-        if (error) {
+        if (decodedData.email != email) {
           throw { name: "INVALID_TOKEN" };
         } else {
           User.findOne({ resetLink }, (err, user) => {

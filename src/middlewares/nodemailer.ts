@@ -13,13 +13,13 @@ class SMTPemail {
         pass: process.env.Password,
       },
     });
+
     var jwtSecret: any = process.env.JWT_Activate;
-    const verifyingToken = jwt.sign(
-      {
-        username: req.bodyusername,
-      },
-      jwtSecret
-    );
+    const payload = {
+      email: req.body.email,
+      username: req.body.username,
+    };
+    const verifyingToken = jwt.sign(payload, jwtSecret);
 
     let mailOptions = {
       from: process.env.Email,
@@ -62,7 +62,10 @@ class SMTPemail {
       },
     });
     const jwtForgotPassword: any = process.env.JWT_ForgotPassword;
-    const ForgotToken = jwt.sign({ email: req.body.email }, jwtForgotPassword);
+    const ForgotToken = jwt.sign(
+      { email: req.body.email, username: req.body.username },
+      jwtForgotPassword
+    );
 
     let mailOptions = {
       from: process.env.Email,

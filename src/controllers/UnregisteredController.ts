@@ -171,6 +171,35 @@ class unregistered {
     }
   }
 
+  static async demolishGroup(req, res, next) {
+    const { groupName } = req.body;
+    const target: any = await Group.findOne({ groupName });
+    const player: any = await UserProfile.findOne({
+      _userId: target.member[0]._userId,
+    });
+
+    if (target) {
+      if (target.member.length == 1) {
+        if (req.params.id == player._userId) {
+          const deleted: any = await Group.deleteOne({ groupName });
+          await UserProfile.findByIdAndUpdate(player._id, {
+            $unset: { _groupId: "" },
+          });
+          res.status(201).json({
+            success: true,
+            message: `${target.groupName} has successfully deleted`,
+          });
+        } else {
+          next({ name: "FORBIDDEN" });
+        }
+      } else {
+        next({ name: "GROUP_NOT_EMPTY" });
+      }
+    } else {
+      next({ name: "GROUP_NOT_FOUND" });
+    }
+  }
+
   static async groupRecruit(req, res, next) {
     const { member, groupName, age, subDistrict } = req.body;
 
@@ -185,36 +214,69 @@ class unregistered {
     const userAge = Math.floor((datenow - birthdate) / 31536000000);
     const MYAge = Math.floor((datenow - MYbirthdate) / 31536000000);
 
-    if (user.subDistrict === myself.subDistrict) {
-      if (user._tournamentId == null || undefined) {
-        if (user._groupId == null || undefined) {
-          if (userAge == MYAge) {
-            await Group.findByIdAndUpdate(myself._groupId, {
-              $push: { member },
-            });
-            await UserProfile.findByIdAndUpdate(user._id, {
-              $set: { _groupId: myself._groupId },
-            });
-            res.status(201).json({
-              success: true,
-              message: `${user.fullname} has successfully join group`,
-            });
+    if (myself) {
+      if (user.subDistrict === myself.subDistrict) {
+        if (user._tournamentId == null || undefined) {
+          if (user._groupId == null || undefined) {
+            if (userAge == MYAge) {
+              await Group.findByIdAndUpdate(myself._groupId, {
+                $push: { member },
+              });
+              await UserProfile.findByIdAndUpdate(user._id, {
+                $set: { _groupId: myself._groupId },
+              });
+              res.status(201).json({
+                success: true,
+                message: `${user.fullname} has successfully join group`,
+              });
+            } else {
+              next({ name: "REQUIREMENT_NOT_MET" });
+            }
           } else {
-            next({ name: "REQUIREMENT_NOT_MET" });
+            next({ name: "USER_ALREADY_IN_GROUP" });
           }
         } else {
-          next({ name: "ALREADY_IN_GROUP" });
+          next({ name: "ALREADY_PARTICIPATED" });
         }
       } else {
-        next({ name: "ALREADY_PARTICIPATED" });
+        next({ name: "DIFFERENT_SUBDISTRICT" });
       }
     } else {
-      next({ name: "DIFFERENT_SUBDISTRICT" });
+      next({ name: "FORBIDDEN" });
     }
   }
 
   static async groupKick(req, res, next) {
-    // kick member dari group
+    const { _userId } = req.body;
+    const leader: any = await UserProfile.findOne({ _userId: req.params.id });
+    const groupCheck: any = await Group.findById(leader._groupId);
+
+    if (leader) {
+      if (groupCheck) {
+        if (groupCheck.member.length > 1) {
+          await Group.findByIdAndUpdate(leader._groupId, {
+            $pull: { member: { _userId } },
+          });
+          const user: any = await UserProfile.findOneAndUpdate(
+            { _userId },
+            {
+              $unset: { _groupId: "" },
+            }
+          );
+          res.status(201).json({
+            success: true,
+            message: `${user.fullname} has successfully kicked from ${groupCheck.groupName}`,
+          });
+          res.send("lanjut");
+        } else {
+          next({ name: "GROUP_EMPTY" });
+        }
+      } else {
+        next({ name: "GROUP_NOT_FOUND" });
+      }
+    } else {
+      next({ name: "FORBIDDEN" });
+    }
   }
 
   static async groupEditProfile(req, res, next) {

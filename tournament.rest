@@ -9,21 +9,45 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyY
 }
 
 
-### SHUFFLING participant
+### SHUFFLING FFA participant
 PUT http://localhost:5000/comittee/shuffle/5fd0b0291ad02c425044c659
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 {
-    "_id":"5fd371e25ba3d45188c6aa71"
+    "_id":"5fd3abe80db961494422a611"
 }
 
 
-### BRANCHES participant
+### SHUFFLING BRANCHES participant
 PUT http://localhost:5000/comittee/branches/5fd0b0291ad02c425044c659
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 {
     "_id":"5fd3abe80db961494422a611"
+}
+
+
+
+### BRANCHES proceed participant
+PUT http://localhost:5000/comittee/proceedBranches/5fd0b0291ad02c425044c659
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
+
+{
+    "_id":"5fd4a45dde31064fd46252d3",
+    
+    "participant":[
+       {
+           "_userId":"5fd10555249a1e08745312c6",
+           "score":54
+       },
+       {
+           "_userId":"5fd1941ad95e6f444c0148dc",
+           "score":87
+       }
+   ]
+
+
 }

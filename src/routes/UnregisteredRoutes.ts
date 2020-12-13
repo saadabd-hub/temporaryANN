@@ -6,12 +6,6 @@ import authorization from "../middlewares/authorization";
 
 const router = Router();
 
-// router.post(
-//   "/submit/:id",
-//   authentication, authorization.allowifloggedin, authorization.grantacsess("createOwn", "submit"),
-//   UnregisteredController.SubmitTournament,
-//   UnregisteredController.sendSubmission
-// )
 router.post(
   "/submit/:id",
   authorization.user,
@@ -40,10 +34,22 @@ router.post(
   UnregisteredController.createGroup
 );
 
+router.delete(
+  "/demolishGroup/:id",
+  authorization.user,
+  UnregisteredController.demolishGroup
+);
+
 router.put(
   "/groupRecruit/:id",
   authorization.user,
   UnregisteredController.groupRecruit
+);
+
+router.put(
+  "/groupKick/:id",
+  authorization.user,
+  UnregisteredController.groupKick
 );
 
 export default router;

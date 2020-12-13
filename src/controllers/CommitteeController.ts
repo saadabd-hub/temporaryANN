@@ -200,36 +200,72 @@ class CommitteeController {
       _groupId,
     } = req.body;
 
-    const entity = participant[0]._userId || participant[0]._groupId;
-    const group = await Group.findOne({ _id: entity });
-    const tournament = await Tournament.findById(_tournamentId);
-    const tournamentRule: any = await TournamentRules.findOne({
-      _id: tournament?._tournamentRulesId,
-    });
-    // const lists: any = await TournamentReport.findOne({
-    //   _tournamentId,
-    //   stageName: "participantList",
-    // });
-    const user: any = await UserProfile.findOne({
-      _userId: entity,
-    });
-    // const registered: any = await UserProfile.findOne({
-    //   _userId: entity,
-    // });
+    const group: any = await Group.findById(_groupId);
+    const tournament: any = await Tournament.findById(_tournamentId);
+    const rules: any = await TournamentRules.findById(
+      tournament._tournamentRulesId
+    );
+    const report: any = await TournamentReport.findOne({ _tournamentId });
 
-    if (user._tournamentId == null) {
-      if (tournamentRule.groupMember == group?.member.length) {
-        const userName: any = await Group.findByIdAndUpdate(entity, {
-          $set: { _tournamentId },
-        });
+    async function assignUserProfile(group, res) {}
 
-        res.status(201).json({
-          success: true,
-          message: `${userName.groupName} has been assigned to be an participant of ${tournament?.tournamentName}`,
-        });
+    if (group) {
+      if (group._tournamentId == null || undefined) {
+        if (
+          tournament.groupEntry == true &&
+          group.member.length == rules.groupMember
+        ) {
+          if (rules.age == group.age) {
+            if (rules.subdistrict == group.subDistrict) {
+              if (rules.maxParticipant >= report.participant.length + 1) {
+                const groupId: any = { _groupId };
+
+                await Group.findByIdAndUpdate(_groupId, {
+                  $set: { _tournamentId },
+                });
+
+                await TournamentReport.findOneAndUpdate(
+                  { _tournamentId },
+                  { $push: { participant: groupId } }
+                );
+
+                for (let i = 0; i < group.member.length; i++) {
+                  const userProfile: any = await UserProfile.findOneAndUpdate(
+                    { _userId: group.member[i]._userId },
+                    {
+                      $set: { _tournamentId },
+                    }
+                  );
+
+                  const userName: any = await User.findByIdAndUpdate(
+                    group.member[i]._userId,
+                    {
+                      $set: { role: "participant" },
+                    }
+                  );
+                }
+
+                res.status(201).json({
+                  success: true,
+                  message: `${group.groupName} has been assigned to be an participant of ${tournament?.tournamentName}`,
+                });
+              } else {
+                next({ name: "LIMIT_REACHED" });
+              }
+            } else {
+              next({ name: "DIFFERENT_SUBDISTRICT" });
+            }
+          } else {
+            next({ name: "REQUIREMENT_NOT_MET" });
+          }
+        } else {
+          next({ name: "INDIVIDUAL_NEEDED" });
+        }
       } else {
-        res.send("kekurangan ato kelebihan");
+        next({ name: "ALREADY_PARTICIPATED" });
       }
+    } else {
+      next({ name: "GROUP_NOT_FOUND" });
     }
   }
 
@@ -274,42 +310,149 @@ class CommitteeController {
     }
   }
 
-  static async proceedBranchesTournament(req, res, next) {
-    const { _id } = req.body;
+  static async shufflingBranchesList(req, res, next) {
+    const { _id, participant, _userId } = req.body;
 
-    const participant: any = await TournamentReport.findById(_id);
-    const shuffled: any = shuffle(participant.participant);
+    const list: any = await TournamentReport.findById(_id);
+    const shuffled: any = shuffle(list.participant);
 
-    const tournament: any = await Tournament.findById(
-      participant._tournamentId
-    );
+    const tournament: any = await Tournament.findById(list._tournamentId);
 
-    if (tournament.stageName === participant.stageName) {
-      for (let i = 0, j = shuffled.length; i < j; i += 2) {
-        const temparray = shuffled.slice(i, i + 2);
+    if (tournament.stageName === list.stageName) {
+      if (list.stageName === 0) {
+        for (let i = 0, j = shuffled.length; i < j; i += 2) {
+          const temparray = shuffled.slice(i, i + 2);
+          const stageName: number = (await list.stageName) + 1;
+          const tournamentReport = new TournamentReport({
+            _tournamentId: list._tournamentId,
+            participant: temparray,
+            stageName,
+          });
 
-        const stageName: number = (await participant.stageName) + 1;
-        const tournamentReport = new TournamentReport({
-          _tournamentId: participant._tournamentId,
-          participant: temparray,
-          stageName,
-        });
+          tournamentReport.save();
+          const update: any = await Tournament.findByIdAndUpdate(
+            list._tournamentId,
+            { $set: { stageName: tournamentReport.stageName } }
+          );
 
-        tournamentReport.save();
-        const update: any = await Tournament.findByIdAndUpdate(
-          participant._tournamentId,
-          { $set: { stageName: tournamentReport.stageName } }
-        );
-
-        res.status(201).json({
-          success: true,
-          message: `${update.tournamentName} has been moving to next stage`,
-        });
+          res.status(201).json({
+            success: true,
+            message: `${update.tournamentName} has been moving to next stage`,
+          });
+        }
       }
     } else {
       next({ name: "STAGE_ERROR" });
     }
   }
+
+  static async proceedBranchesTournament(req, res, next) {
+    const { _id, participant, _userId } = req.body;
+
+    const list: any = await TournamentReport.findById(_id);
+    const shuffled: any = shuffle(list.participant);
+
+    const tournament: any = await Tournament.findById(list._tournamentId);
+
+    const update: any = await TournamentReport.findByIdAndUpdate(_id, {
+      $set: { participant },
+    });
+
+    const ReportCheck: any = await TournamentReport.findOne({
+      stageName: update.stageName + 1,
+    });
+
+    const userCheck: any = await TournamentReport.findOne({ participant });
+    console.log(userCheck);
+
+    async function IfElse(ReportCheck, res) {
+      if (ReportCheck) {
+        console.log("masuk if");
+        await TournamentReport.findByIdAndUpdate(ReportCheck._id, {
+          $push: { participant: participant[0] },
+        });
+        return res.status(201).json({
+          success: true,
+          message: `${participant[0]._userId} won, and going to next stage of ${tournament.tournamentName}`,
+        });
+      } else {
+        const stageName: number = list.stageName + 1;
+        const tournamentReport = new TournamentReport({
+          _tournamentId: list._tournamentId,
+          participant: participant[0],
+          stageName,
+        });
+        tournamentReport.save();
+        await Tournament.findByIdAndUpdate(list._tournamentId, {
+          $set: { stageName },
+        });
+
+        return res.status(201).json({
+          success: true,
+          message: `${participant[1]._userId} won, and going to next stage of ${tournament.tournamentName}`,
+        });
+      }
+    }
+
+    if (ReportCheck.participant._userId) {
+      next({ name: "ALREADY_HAVE_WINNER" });
+    } else {
+      if (update.participant.length == 1) {
+        console.log("masuk 1");
+
+        IfElse(ReportCheck, res);
+      } else {
+        if (update.participant[0].score > update.participant[1].score) {
+          console.log("masuk 2");
+          IfElse(ReportCheck, res);
+        } else {
+          console.log("masuk 3");
+          if (ReportCheck) {
+            console.log("masuk 4");
+            console.log(ReportCheck.participant);
+
+            await TournamentReport.findByIdAndUpdate(ReportCheck._id, {
+              $push: { participant: participant[1] },
+            });
+            return res.status(201).json({
+              success: true,
+              message: `${participant[1]._userId} won, and going to next stage of ${tournament.tournamentName}`,
+            });
+          } else {
+            console.log("masuk 5");
+            const stageName: number = list.stageName + 1;
+            const tournamentReport = new TournamentReport({
+              _tournamentId: list._tournamentId,
+              participant: participant[1],
+              stageName,
+            });
+
+            tournamentReport.save();
+            // .then(() => {
+            await Tournament.findByIdAndUpdate(list._tournamentId, {
+              $set: { stageName },
+            });
+            // });
+            return res.status(201).json({
+              success: true,
+              message: `${participant[1]._userId} won, and going to next stage of ${tournament.tournamentName}`,
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // static async startBranchesTournament(req, res, next) {
+  //   const { _id } = req.body;
+  //   const report: any = await TournamentReport.findById(_id);
+  //   const tournament: any = await Tournament.findById(report._tournamentId);
+
+  //   if(tournament.stageName==0){
+  //     res.send()
+  //   }
+
+  // }
 
   static async proceedFreeForAllTournament(req, res, next) {
     // mulai lomba free for all

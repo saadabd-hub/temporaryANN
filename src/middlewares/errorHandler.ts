@@ -13,13 +13,21 @@ const errorHandling = (err, req, res, next) => {
       message =
         "You already submitted to this tournament, please wait for further announcement";
       break;
+    case "ALREADY_HAVE_WINNER":
+      code = 409;
+      message = "This tournament already have a winner";
+      break;
     case "ALREADY_PARTICIPATED":
       code = 409;
-      message = "This user is already a participant of another game";
+      message = "This User or Group is already a participant of another game";
       break;
     case "ALREADY_IN_GROUP":
       code = 409;
       message = "You are already part of a group";
+      break;
+    case "USER_ALREADY_IN_GROUP":
+      code = 409;
+      message = "This User already part of a group";
       break;
     case "TOURNAMENT_EXIST":
       code = 409;
@@ -101,13 +109,25 @@ const errorHandling = (err, req, res, next) => {
       code = 404;
       message = "Either Username or Email or Password combination not found";
       break;
+    case "GROUP_NOT_FOUND":
+      code = 404;
+      message = "Group not found";
+      break;
+    case "GROUP_EMPTY":
+      code = 404;
+      message = "Group has nothing except the leader itself";
+      break;
+    case "GROUP_NOT_EMPTY":
+      code = 404;
+      message = "Group Leader must kick all member before demolish";
+      break;
     case "DIFFERENT_SUBDISTRICT":
       code = 404;
       message = "This user from another subdistrict";
       break;
     case "REQUIREMENT_NOT_MET":
       code = 404;
-      message = "This user doesn't met the requirement";
+      message = "This user doesn't met the age requirement";
       break;
     case "BANNED":
       code = 404;

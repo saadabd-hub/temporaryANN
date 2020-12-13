@@ -65,6 +65,12 @@ router.put(
 router.put(
   "/branches/:id",
   authorization.comittee,
+  CommitteeController.shufflingBranchesList
+);
+
+router.put(
+  "/proceedBranches/:id",
+  authorization.comittee,
   CommitteeController.proceedBranchesTournament
 );
 
