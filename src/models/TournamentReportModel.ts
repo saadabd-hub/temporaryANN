@@ -12,7 +12,7 @@ const tournamentReportSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
       },
-      score: Number,
+      score: { type: Number, default: null },
     },
   ],
   _tournamentId: {

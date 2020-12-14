@@ -98,12 +98,12 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyY
 
 
 ### KICK per group
-PUT http://localhost:5000/comittee/kickParticipant/5fd0b0291ad02c425044c659
+PUT http://localhost:5000/comittee/kickGroup/5fd0b0291ad02c425044c659
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 {
     
-    "_userId":"5fd65b38d95e6f444c014905",
-    "_tournamentId":"5fd3abe80db961494422a610"
+    "_groupId":"5fd64c63eea1ad181cced3f1",
+    "_tournamentId":"5fd5d042ca00a00b444a9daf"
 }

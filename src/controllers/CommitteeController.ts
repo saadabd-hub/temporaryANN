@@ -9,6 +9,7 @@ import TournamentStage from "../models/TournamentStageModel";
 import Group from "../models/GroupModel";
 import Inbox from "../models/InboxModel";
 import moment from "moment";
+import errorHandling from "../middlewares/errorHandler";
 
 class CommitteeController {
   static async createRules(req, res, next) {
@@ -370,177 +371,190 @@ class CommitteeController {
     });
   }
 
-  static async shufflingParticipantList(req, res, next) {
-    const { _id } = req.body;
-    const participant: any = await TournamentReport.findById(_id);
-    const shuffled: any = shuffle(participant.participant);
+  // static async shufflingParticipantList(req, res, next) {
+  //   const { _id } = req.body;
+  //   const participant: any = await TournamentReport.findById(_id);
+  //   const shuffled: any = shuffle(participant.participant);
 
-    const tournament: any = await Tournament.findById(
-      participant._tournamentId
-    );
+  //   const tournament: any = await Tournament.findById(
+  //     participant._tournamentId
+  //   );
 
-    if (tournament.stageName === participant.stageName) {
-      const stageName: number = (await participant.stageName) + 1;
-      const tournamentReport = new TournamentReport({
-        _tournamentId: participant._tournamentId,
-        participant: shuffled,
-        stageName,
+  //   if (tournament.stageName === participant.stageName) {
+  //     const stageName: number = (await participant.stageName) + 1;
+  //     const tournamentReport = new TournamentReport({
+  //       _tournamentId: participant._tournamentId,
+  //       participant: shuffled,
+  //       stageName,
+  //     });
+
+  //     tournamentReport.save();
+  //     const update: any = await Tournament.findByIdAndUpdate(
+  //       participant._tournamentId,
+  //       { $set: { stageName: tournamentReport.stageName } }
+  //     );
+
+  //     res.status(201).json({
+  //       success: true,
+  //       message: `${update.tournamentName} has been moving to next stage`,
+  //     });
+  //   } else {
+  //     next({ name: "STAGE_ERROR" });
+  //   }
+  // }
+
+  // static async shufflingBranchesList(req, res, next) {
+  //   const { _id, participant, _userId } = req.body;
+
+  //   const list: any = await TournamentReport.findById(_id);
+  //   const shuffled: any = shuffle(list.participant);
+
+  //   const tournament: any = await Tournament.findById(list._tournamentId);
+
+  //   if (tournament.stageName === list.stageName) {
+  //     if (list.stageName === 0) {
+  //       for (let i = 0, j = shuffled.length; i < j; i += 2) {
+  //         const temparray = shuffled.slice(i, i + 2);
+  //         const stageName: number = (await list.stageName) + 1;
+  //         const tournamentReport = new TournamentReport({
+  //           _tournamentId: list._tournamentId,
+  //           participant: temparray,
+  //           stageName,
+  //         });
+
+  //         tournamentReport.save();
+  //         const update: any = await Tournament.findByIdAndUpdate(
+  //           list._tournamentId,
+  //           { $set: { stageName: tournamentReport.stageName } }
+  //         );
+
+  //         res.status(201).json({
+  //           success: true,
+  //           message: `${update.tournamentName} has been moving to next stage`,
+  //         });
+  //       }
+  //     }
+  //   } else {
+  //     next({ name: "STAGE_ERROR" });
+  //   }
+  // }
+
+  static async proceedTournament(req, res, next) {
+    try {
+      const { _id } = req.body;
+      const Check: any = await TournamentReport.findById(_id);
+      const Stage: any = await Tournament.findById(Check._tournamentId);
+      const Shuffled: any = await shuffle(Check.participant);
+      const scored: any = await TournamentReport.findOne({
+        _id,
+        participant: { $elemMatch: { score: null } },
       });
 
-      tournamentReport.save();
-      const update: any = await Tournament.findByIdAndUpdate(
-        participant._tournamentId,
-        { $set: { stageName: tournamentReport.stageName } }
+      if (Check && Stage) {
+        if (Stage.finished == false) {
+          if (Stage.stageName == Check.stageName) {
+            // if (scored == null) {
+            if (Stage.tournamentType == "branches") {
+              if (Check.stageName == 0) {
+                for (let i = 0; i < Shuffled.length; i += 2) {
+                  let temparray = Shuffled.slice(i, i + 2);
+                  const stageName: number = Check.stageName + 1;
+                  const tournamentReport = new TournamentReport({
+                    _tournamentId: Check._tournamentId,
+                    participant: temparray,
+                    stageName,
+                  });
+
+                  await tournamentReport.save();
+
+                  Tournament.findByIdAndUpdate(Check._tournamentId, {
+                    $set: { stageName: tournamentReport.stageName },
+                  }).then((update) => {
+                    res
+                      .status(201)
+                      .json({
+                        success: true,
+                        message: `${update?.tournamentName} has been moving to next stage`,
+                      })
+                      .catch((err) => {
+                        console.log(err);
+                      });
+                  });
+                }
+              } else if (Check.participant.length > 2) {
+                res.send("finish keluarin ranking, tournament.finished:true");
+              } else {
+                res.send("next bikin fungsi baru");
+              }
+            } else {
+              // FREE FOR ALL
+              // sorting score, ranking
+              const stageName: number = Check.stageName + 1;
+              const tournamentReport = new TournamentReport({
+                _tournamentId: Check._tournamentId,
+                participant: Check.participant,
+                stageName,
+              });
+
+              await tournamentReport.save();
+
+              Tournament.findByIdAndUpdate(Check._tournamentId, {
+                $set: {
+                  stageName: tournamentReport.stageName,
+                  finished: true,
+                },
+              }).then((update) => {
+                res
+                  .status(201)
+                  .json({
+                    success: true,
+                    message: `${update?.tournamentName} has been moving to next stage`,
+                  })
+                  .catch((err) => {
+                    console.log(err);
+                  });
+              });
+            }
+            // }
+          } else {
+            next({ name: "STAGE_ERROR" });
+          }
+        } else {
+          next({ name: "ALREADY_HAVE_WINNER" });
+        }
+      } else {
+        next({ name: "TOURNAMENT_NOT_FOUND" });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  static async putScore(req, res, next) {
+    const { _groupId, _userId, _id, score } = req.body;
+    const profile: any = await TournamentReport.findOne({
+      _id,
+      participant: { $elemMatch: { _groupId } },
+    });
+
+    if (profile != null) {
+      const put: any = await TournamentReport.findOneAndUpdate(
+        { _id, participant: { $elemMatch: { _groupId } } },
+        {
+          $set: {
+            "participant.$.score": score,
+          },
+        },
+        { new: true, upsert: true }
       );
 
       res.status(201).json({
         success: true,
-        message: `${update.tournamentName} has been moving to next stage`,
+        message: `${_groupId} got ${score} on stage${put.stageName}`,
       });
     } else {
-      next({ name: "STAGE_ERROR" });
+      next({ name: "NOT_FOUND" });
     }
-  }
-
-  static async shufflingBranchesList(req, res, next) {
-    const { _id, participant, _userId } = req.body;
-
-    const list: any = await TournamentReport.findById(_id);
-    const shuffled: any = shuffle(list.participant);
-
-    const tournament: any = await Tournament.findById(list._tournamentId);
-
-    if (tournament.stageName === list.stageName) {
-      if (list.stageName === 0) {
-        for (let i = 0, j = shuffled.length; i < j; i += 2) {
-          const temparray = shuffled.slice(i, i + 2);
-          const stageName: number = (await list.stageName) + 1;
-          const tournamentReport = new TournamentReport({
-            _tournamentId: list._tournamentId,
-            participant: temparray,
-            stageName,
-          });
-
-          tournamentReport.save();
-          const update: any = await Tournament.findByIdAndUpdate(
-            list._tournamentId,
-            { $set: { stageName: tournamentReport.stageName } }
-          );
-
-          res.status(201).json({
-            success: true,
-            message: `${update.tournamentName} has been moving to next stage`,
-          });
-        }
-      }
-    } else {
-      next({ name: "STAGE_ERROR" });
-    }
-  }
-
-  static async proceedBranchesTournament(req, res, next) {
-    const { _id, participant, _userId } = req.body;
-
-    const list: any = await TournamentReport.findById(_id);
-    const shuffled: any = shuffle(list.participant);
-
-    const tournament: any = await Tournament.findById(list._tournamentId);
-
-    const update: any = await TournamentReport.findByIdAndUpdate(_id, {
-      $set: { participant },
-    });
-
-    const ReportCheck: any = await TournamentReport.findOne({
-      stageName: update.stageName + 1,
-    });
-
-    const userCheck: any = await TournamentReport.findOne({ participant });
-    console.log(userCheck);
-
-    async function IfElse(ReportCheck, res) {
-      if (ReportCheck) {
-        console.log("masuk if");
-        await TournamentReport.findByIdAndUpdate(ReportCheck._id, {
-          $push: { participant: participant[0] },
-        });
-        return res.status(201).json({
-          success: true,
-          message: `${participant[0]._userId} won, and going to next stage of ${tournament.tournamentName}`,
-        });
-      } else {
-        const stageName: number = list.stageName + 1;
-        const tournamentReport = new TournamentReport({
-          _tournamentId: list._tournamentId,
-          participant: participant[0],
-          stageName,
-        });
-        tournamentReport.save();
-        await Tournament.findByIdAndUpdate(list._tournamentId, {
-          $set: { stageName },
-        });
-
-        return res.status(201).json({
-          success: true,
-          message: `${participant[1]._userId} won, and going to next stage of ${tournament.tournamentName}`,
-        });
-      }
-    }
-
-    if (ReportCheck.participant._userId) {
-      next({ name: "ALREADY_HAVE_WINNER" });
-    } else {
-      if (update.participant.length == 1) {
-        console.log("masuk 1");
-
-        IfElse(ReportCheck, res);
-      } else {
-        if (update.participant[0].score > update.participant[1].score) {
-          console.log("masuk 2");
-          IfElse(ReportCheck, res);
-        } else {
-          console.log("masuk 3");
-          if (ReportCheck) {
-            console.log("masuk 4");
-            console.log(ReportCheck.participant);
-
-            await TournamentReport.findByIdAndUpdate(ReportCheck._id, {
-              $push: { participant: participant[1] },
-            });
-            return res.status(201).json({
-              success: true,
-              message: `${participant[1]._userId} won, and going to next stage of ${tournament.tournamentName}`,
-            });
-          } else {
-            console.log("masuk 5");
-            const stageName: number = list.stageName + 1;
-            const tournamentReport = new TournamentReport({
-              _tournamentId: list._tournamentId,
-              participant: participant[1],
-              stageName,
-            });
-
-            tournamentReport.save();
-            // .then(() => {
-            await Tournament.findByIdAndUpdate(list._tournamentId, {
-              $set: { stageName },
-            });
-            // });
-            return res.status(201).json({
-              success: true,
-              message: `${participant[1]._userId} won, and going to next stage of ${tournament.tournamentName}`,
-            });
-          }
-        }
-      }
-    }
-  }
-
-  static async proceedFreeForAllTournament(req, res, next) {
-    // mulai lomba free for all
-  }
-
-  static async putScore(req, res, next) {
-    // naruh score ke peserta
   }
 
   static async finishingStage(req, res, next) {

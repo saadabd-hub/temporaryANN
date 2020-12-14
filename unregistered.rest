@@ -4,7 +4,7 @@ POST http://localhost:5000/user/signin
 Content-Type: application/json
 
 {
-    "username":"b",
+    "username":"d",
     "password":"abc"
 }
 
@@ -66,7 +66,7 @@ Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
 
 {
-      "groupName":"cruxiates"
+      "groupName":"cityneon"
 }
 
 
@@ -77,7 +77,7 @@ Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
 
 {
-      "_id":"5fd5984cadd4e049543cf761"
+      "groupName":"cityneon"
 }
 
 
@@ -99,14 +99,14 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZ
 
 
 ### KICK group
-PUT http://localhost:5000/user/groupRecruit/5fd10555249a1e08745312c6
+PUT http://localhost:5000/user/groupKick/5fd10555249a1e08745312c6
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQxMDU1NTI0OWExZTA4NzQ1MzEyYzYiLCJpYXQiOjE2MDc1NzMzNzZ9.CA57QwuPNwhuVc6864xbRxfwwJBoSfynmIot4DI4G9U
 
-{   
-      "member":[
-          {
-              "_userId":"5fd19319d95e6f444c0148d7"
-        }
-      ]  
+{     
+    "_userId":"5fd19319d95e6f444c0148d7"   
 }
+
+### HALL of FAME
+GET http://localhost:5000/hallOfFame
+Content-Type: application/json

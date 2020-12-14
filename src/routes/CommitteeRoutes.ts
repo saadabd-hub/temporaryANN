@@ -56,21 +56,15 @@ router.get(
 router.put("/startFreeForAll/:id");
 
 router.put(
-  "/shuffle/:id",
+  "/putScore/:id",
   authorization.comittee,
-  CommitteeController.shufflingParticipantList
+  CommitteeController.putScore
 );
 
 router.put(
-  "/branches/:id",
+  "/proceedTournament/:id",
   authorization.comittee,
-  CommitteeController.shufflingBranchesList
-);
-
-router.put(
-  "/proceedBranches/:id",
-  authorization.comittee,
-  CommitteeController.proceedBranchesTournament
+  CommitteeController.proceedTournament
 );
 
 export default router;
