@@ -113,6 +113,11 @@ const errorHandling = (err, req, res, next) => {
       code = 404;
       message = "Group not found";
       break;
+    case "GROUP_SIZE":
+      code = 404;
+      message =
+        "Group size either too small or too big, please read the tournament's rules";
+      break;
     case "GROUP_EMPTY":
       code = 404;
       message = "Group has nothing except the leader itself";

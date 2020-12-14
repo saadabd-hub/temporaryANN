@@ -179,8 +179,8 @@ class unregistered {
     });
 
     if (target) {
-      if (target.member.length == 1) {
-        if (req.params.id == player._userId) {
+      if (target.member[0]._userId == req.params.id) {
+        if (target.member.length == 1) {
           const deleted: any = await Group.deleteOne({ groupName });
           await UserProfile.findByIdAndUpdate(player._id, {
             $unset: { _groupId: "" },
@@ -190,10 +190,10 @@ class unregistered {
             message: `${target.groupName} has successfully deleted`,
           });
         } else {
-          next({ name: "FORBIDDEN" });
+          next({ name: "GROUP_NOT_EMPTY" });
         }
       } else {
-        next({ name: "GROUP_NOT_EMPTY" });
+        next({ name: "FORBIDDEN" });
       }
     } else {
       next({ name: "GROUP_NOT_FOUND" });
@@ -207,6 +207,7 @@ class unregistered {
     const myself: any = await UserProfile.findOne({
       _userId: req.params.id,
     });
+    const group: any = await Group.findById(myself._groupId);
 
     const birthdate: any = user.birthDate.valueOf();
     const MYbirthdate: any = myself.birthDate.valueOf();
@@ -214,35 +215,43 @@ class unregistered {
     const userAge = Math.floor((datenow - birthdate) / 31536000000);
     const MYAge = Math.floor((datenow - MYbirthdate) / 31536000000);
 
-    if (myself) {
-      if (user.subDistrict === myself.subDistrict) {
-        if (user._tournamentId == null || undefined) {
-          if (user._groupId == null || undefined) {
-            if (userAge == MYAge) {
-              await Group.findByIdAndUpdate(myself._groupId, {
-                $push: { member },
-              });
-              await UserProfile.findByIdAndUpdate(user._id, {
-                $set: { _groupId: myself._groupId },
-              });
-              res.status(201).json({
-                success: true,
-                message: `${user.fullname} has successfully join group`,
-              });
+    if (group) {
+      if (req.params.id == group.member[0]._userId) {
+        if (user.subDistrict === myself.subDistrict) {
+          if (user._tournamentId == null || undefined) {
+            if (user._groupId == null || undefined) {
+              if (userAge == MYAge) {
+                await Group.findByIdAndUpdate(myself._groupId, {
+                  $push: { member },
+                });
+                await UserProfile.findByIdAndUpdate(user._id, {
+                  $set: { _groupId: myself._groupId },
+                });
+                res.status(201).json({
+                  success: true,
+                  message: `${user.fullname} has successfully join group`,
+                });
+              } else {
+                next({ name: "REQUIREMENT_NOT_MET" });
+              }
             } else {
-              next({ name: "REQUIREMENT_NOT_MET" });
+              next({ name: "USER_ALREADY_IN_GROUP" });
             }
           } else {
-            next({ name: "USER_ALREADY_IN_GROUP" });
+            next({ name: "ALREADY_PARTICIPATED" });
           }
         } else {
-          next({ name: "ALREADY_PARTICIPATED" });
+          next({ name: "DIFFERENT_SUBDISTRICT" });
         }
       } else {
-        next({ name: "DIFFERENT_SUBDISTRICT" });
+        console.log(group.member[0]._userId);
+        console.log(myself._userId);
+        console.log(myself._userId == group.member[0]._userId);
+
+        next({ name: "FORBIDDEN" });
       }
     } else {
-      next({ name: "FORBIDDEN" });
+      next({ name: "GROUP_NOT_FOUND" });
     }
   }
 
@@ -251,8 +260,8 @@ class unregistered {
     const leader: any = await UserProfile.findOne({ _userId: req.params.id });
     const groupCheck: any = await Group.findById(leader._groupId);
 
-    if (leader) {
-      if (groupCheck) {
+    if (groupCheck) {
+      if (groupCheck.member[0]._userId == req.params.id) {
         if (groupCheck.member.length > 1) {
           await Group.findByIdAndUpdate(leader._groupId, {
             $pull: { member: { _userId } },
@@ -272,10 +281,10 @@ class unregistered {
           next({ name: "GROUP_EMPTY" });
         }
       } else {
-        next({ name: "GROUP_NOT_FOUND" });
+        next({ name: "FORBIDDEN" });
       }
     } else {
-      next({ name: "FORBIDDEN" });
+      next({ name: "GROUP_NOT_FOUND" });
     }
   }
 

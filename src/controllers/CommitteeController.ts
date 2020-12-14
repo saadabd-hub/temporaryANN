@@ -112,7 +112,7 @@ class CommitteeController {
   }
 
   static async approveSubmission(req, res, next) {
-    const { participant, _tournamentId, _userId, _groupId } = req.body;
+    const { _tournamentId, _userId, _groupId } = req.body;
 
     const tournament = await Tournament.findById(_tournamentId);
     const tournamentRule: any = await TournamentRules.findOne({
@@ -125,11 +125,8 @@ class CommitteeController {
     const lists: any = await TournamentReport.findOne({
       _tournamentId,
       stageName: 0,
-      // stageName: "participantList",
     });
-    const user: any = await UserProfile.findOne({
-      _userId: participant[0]._userId,
-    });
+    const user: any = await UserProfile.findOne({ _userId });
 
     const birthdate: any = user?.birthDate.valueOf();
     const datenow = Date.now();
@@ -147,21 +144,19 @@ class CommitteeController {
                   tournamentRule.maxParticipant >=
                   lists.participant.length + 1
                 ) {
-                  const userName: any = await User.findByIdAndUpdate(
-                    participant[0]._userId,
-                    {
-                      $set: { role: "participant" },
-                    }
-                  );
+                  const userId: any = { _userId };
+                  const userName: any = await User.findByIdAndUpdate(_userId, {
+                    $set: { role: "participant" },
+                  });
 
                   await UserProfile.findOneAndUpdate(
-                    { _userId: participant[0]._userId },
+                    { _userId },
                     { $set: { _tournamentId } }
                   );
 
                   await TournamentReport.findOneAndUpdate(
                     { _tournamentId },
-                    { $push: { participant } }
+                    { $push: { participant: userId } }
                   );
 
                   res.status(201).json({
@@ -207,56 +202,55 @@ class CommitteeController {
     );
     const report: any = await TournamentReport.findOne({ _tournamentId });
 
-    async function assignUserProfile(group, res) {}
-
     if (group) {
       if (group._tournamentId == null || undefined) {
-        if (
-          tournament.groupEntry == true &&
-          group.member.length == rules.groupMember
-        ) {
-          if (rules.age == group.age) {
-            if (rules.subdistrict == group.subDistrict) {
-              if (rules.maxParticipant >= report.participant.length + 1) {
-                const groupId: any = { _groupId };
+        if (tournament.groupEntry == true) {
+          if (group.member.length == rules.groupMember) {
+            if (rules.age == group.age) {
+              if (rules.subdistrict == group.subDistrict) {
+                if (rules.maxParticipant >= report.participant.length + 1) {
+                  const groupId: any = { _groupId };
 
-                await Group.findByIdAndUpdate(_groupId, {
-                  $set: { _tournamentId },
-                });
+                  await Group.findByIdAndUpdate(_groupId, {
+                    $set: { _tournamentId },
+                  });
 
-                await TournamentReport.findOneAndUpdate(
-                  { _tournamentId },
-                  { $push: { participant: groupId } }
-                );
-
-                for (let i = 0; i < group.member.length; i++) {
-                  const userProfile: any = await UserProfile.findOneAndUpdate(
-                    { _userId: group.member[i]._userId },
-                    {
-                      $set: { _tournamentId },
-                    }
+                  await TournamentReport.findOneAndUpdate(
+                    { _tournamentId },
+                    { $push: { participant: groupId } }
                   );
 
-                  const userName: any = await User.findByIdAndUpdate(
-                    group.member[i]._userId,
-                    {
-                      $set: { role: "participant" },
-                    }
-                  );
+                  for (let i = 0; i < group.member.length; i++) {
+                    const userProfile: any = await UserProfile.findOneAndUpdate(
+                      { _userId: group.member[i]._userId },
+                      {
+                        $set: { _tournamentId },
+                      }
+                    );
+
+                    const userName: any = await User.findByIdAndUpdate(
+                      group.member[i]._userId,
+                      {
+                        $set: { role: "participant" },
+                      }
+                    );
+                  }
+
+                  res.status(201).json({
+                    success: true,
+                    message: `${group.groupName} has been assigned to be an participant of ${tournament?.tournamentName}`,
+                  });
+                } else {
+                  next({ name: "LIMIT_REACHED" });
                 }
-
-                res.status(201).json({
-                  success: true,
-                  message: `${group.groupName} has been assigned to be an participant of ${tournament?.tournamentName}`,
-                });
               } else {
-                next({ name: "LIMIT_REACHED" });
+                next({ name: "DIFFERENT_SUBDISTRICT" });
               }
             } else {
-              next({ name: "DIFFERENT_SUBDISTRICT" });
+              next({ name: "REQUIREMENT_NOT_MET" });
             }
           } else {
-            next({ name: "REQUIREMENT_NOT_MET" });
+            next({ name: "GROUP_SIZE" });
           }
         } else {
           next({ name: "INDIVIDUAL_NEEDED" });
@@ -266,6 +260,104 @@ class CommitteeController {
       }
     } else {
       next({ name: "GROUP_NOT_FOUND" });
+    }
+  }
+
+  static async kickParticipant(req, res, next) {
+    try {
+      const { _userId, _groupId, _tournamentId } = req.body;
+      const tournament: any = await Tournament.findById(_tournamentId);
+      const target: any = await UserProfile.findOne({ _userId });
+      const lists: any = await TournamentReport.findOne(
+        { _tournamentId },
+        { participant: { $elemMatch: { _userId } } }
+      );
+
+      if (tournament) {
+        if (target && lists.participant[0]._userId) {
+          await TournamentReport.findOneAndUpdate(
+            { _tournamentId },
+            {
+              $pull: { participant: { _userId } },
+            }
+          );
+
+          await UserProfile.findOneAndUpdate(
+            { _userId },
+            {
+              $unset: { _tournamentId: "" },
+            }
+          );
+
+          await User.findByIdAndUpdate(_userId, {
+            $set: { role: "user" },
+          });
+
+          res.status(201).json({
+            success: true,
+            message: `${target.fullname} has been kicked from ${tournament.tournamentName}`,
+          });
+        } else {
+          next({ name: "USER_NOT_FOUND" });
+        }
+      } else {
+        next({ name: "TOURNAMENT_NOT_FOUND" });
+      }
+    } catch {
+      next({ name: "USER_NOT_FOUND" });
+    }
+  }
+
+  static async kickGroup(req, res, next) {
+    try {
+      const { _groupId, _tournamentId } = req.body;
+      const tournament: any = await Tournament.findById(_tournamentId);
+      const target: any = await Group.findById(_groupId);
+      const lists: any = await TournamentReport.findOne(
+        { _tournamentId },
+        { participant: { $elemMatch: { _groupId } } }
+      );
+
+      if (tournament) {
+        if (target && lists.participant[0]._groupId) {
+          await TournamentReport.findOneAndUpdate(
+            { _tournamentId },
+            {
+              $pull: { participant: { _groupId } },
+            }
+          );
+
+          await Group.findByIdAndUpdate(_groupId, {
+            $unset: { _tournamentId: "" },
+          });
+
+          for (let i = 0; i < target.member.length; i++) {
+            await UserProfile.findOneAndUpdate(
+              { _userId: target.member[i]._userId },
+              {
+                $unset: { _tournamentId: "" },
+              }
+            );
+
+            await User.findByIdAndUpdate(target.member[i]._userId, {
+              $set: { role: "user" },
+            });
+          }
+
+          res.status(201).json({
+            success: true,
+            message: `${target.groupName} has been kicked from ${tournament.tournamentName}`,
+          });
+        } else {
+          next({ name: "GROUP_NOT_FOUND" });
+        }
+      } else {
+        next({ name: "TOURNAMENT_NOT_FOUND" });
+      }
+    } catch {
+      res.status(409).json({
+        success: false,
+      });
     }
   }
 

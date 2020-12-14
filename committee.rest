@@ -63,28 +63,47 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyY
 
 
 
-### APPROVE group AUTOMATICALLY through inbox
+### APPROVE per group 
 PUT http://localhost:5000/comittee/approveGroup/5fd0b0291ad02c425044c659
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 { 
-    "_groupId":"5fd5d7e16f0fce2a7868ee64",
+    "_groupId":"5fd64c63eea1ad181cced3f1",
     "_tournamentId":"5fd5d042ca00a00b444a9daf"
 }
 
-
-
-### APPROVE user AUTOMATICALLY through inbox
+### APPROVE per user
 PUT http://localhost:5000/comittee/approve/5fd0b0291ad02c425044c659
 Content-Type: application/json
 access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
 
 {
-    "participant":[
-        {
-        "_userId":"5fd1941ad95e6f444c0148dc"
-        }
-    ],
+    
+    "_userId":"5fd65b38d95e6f444c014905",
+    "_tournamentId":"5fd3abe80db961494422a610"
+}
+
+
+### KICK per user
+PUT http://localhost:5000/comittee/kickParticipant/5fd0b0291ad02c425044c659
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
+
+{
+    
+    "_userId":"5fd65b38d95e6f444c014905",
+    "_tournamentId":"5fd3abe80db961494422a610"
+}
+
+
+### KICK per group
+PUT http://localhost:5000/comittee/kickParticipant/5fd0b0291ad02c425044c659
+Content-Type: application/json
+access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmQwYjAyOTFhZDAyYzQyNTA0NGM2NTkiLCJpYXQiOjE2MDc1NDI0NDJ9.8xE1TpuYdyvdESBddJ5sPAqG4ehuxsfRu76Da_atBcY
+
+{
+    
+    "_userId":"5fd65b38d95e6f444c014905",
     "_tournamentId":"5fd3abe80db961494422a610"
 }

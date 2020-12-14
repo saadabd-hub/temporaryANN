@@ -65,3 +65,9 @@ access_token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI1ZmJjNzBmN2E0ODRjN
 {
     "fullname":"terara"
 }
+
+
+
+### DEMO 
+GET  http://localhost:5000/csgo
+Content-Type: application/json

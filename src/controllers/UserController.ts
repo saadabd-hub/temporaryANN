@@ -4,6 +4,8 @@ import bcrypt, { hash } from "bcrypt";
 import User from "../models/UserModel";
 import UserProfile from "../models/User_ProfileModel";
 import _ from "lodash";
+import Tournament from "../models/TournamentModel";
+import TournamentReport from "../models/TournamentReportModel";
 require("dotenv").config();
 
 class UserController {
@@ -162,9 +164,28 @@ class UserController {
     // res.json({ tournament, tournamentrules})
   }
 
-  static seeHallOfFame(req, res, next) {
-    // const winner= await TournamentReport.find(_id,stageName:'result')
-    // res.json({winner})
+  static async seeHallOfFame(req, res, next) {
+    // const FFA:any = await Tournament.find({finished:true, tournamentType:'freeforall'})
+    // const BRANCHES:any = await Tournament.find({finished:true, tournamentType:'branches'})
+    // if(FFA){
+    //   // for looping berdasarkan FFA.length
+    //   const rank: any = await TournamentReport.find({
+    //     _tournamentId: FFA[i]._id,
+    //   });
+    //   const result = Math.max(rank.stageName);
+    //   const winner:any=await TournamentReport.find({stageName:result})
+    //   const sort= winner.participant[i].score
+    //   res.status(201).json({ result:sort.sort() });
+    // }else if (BRANCHES) {
+    //   // looping berdasarkan BRANCHES.length
+    //   const rank: any = await TournamentReport.findOne({
+    //     _tournamentId: BRANCHES._id,
+    //   });
+    //   const result = Math.max(rank.stageName);
+    //   const winner: any = await TournamentReport.find({ stageName: result });
+    //   const sort = winner.participant[i].score;
+    //   res.status(201).json({ result: sort.sort() });
+    // }
   }
 }
 
