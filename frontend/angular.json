@@ -47,7 +47,6 @@
               "./node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery/dist/jquery.min.js",
               "node_modules/jquery-bracket/dist/jquery.bracket.min.js",
-              "node_modules/jquery-bracket/dist/jquery.gracket.min.js",
               "node_modules/datatables.net/js/jquery.dataTables.js"
 
             ]
