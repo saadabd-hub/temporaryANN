@@ -39,6 +39,8 @@ import { PagesearchComponent } from './components/pagesearch/pagesearch.componen
 import { FormffaComponent } from './components/board/formffa/formffa.component';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { ClubfootbalComponent } from './components/board/clubfootbal/clubfootbal.component';
+import { HighlightDirective } from './highlight.directive';
+import { Filter } from './components/filter.pipe/filter.pipe.component';
 
 
 
@@ -66,7 +68,9 @@ import { ClubfootbalComponent } from './components/board/clubfootbal/clubfootbal
     PagesearchComponent,
     FormffaComponent,
     SpinnerComponent,
-    ClubfootbalComponent
+    ClubfootbalComponent,
+    HighlightDirective,
+    Filter.PipeComponent
   ],
   imports: [
     BrowserModule,
