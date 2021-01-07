@@ -150,7 +150,15 @@ class UserController {
     // const rules= await TournamentRules.findOne ({tournament._tournamentRulesId})
     // if(rules.maxParticipant >= data.participant.length )
   }
-
+  static participantAvailable(req, res, next){
+    const {_userId} = req.params;
+    const participant = TournamentReport.findOne({participant: {$elemMatch:{_userId}}});
+    if(participant){
+      res.status(201).json({message: 'Participant is Available', participant})
+    } else {
+      res.status(400).json({message: 'Participant is Not Available'})
+    }
+  }
   static seeTournamentList(req, res, next) {
     // pagination
     // search pake regex
